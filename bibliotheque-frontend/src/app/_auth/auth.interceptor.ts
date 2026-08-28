@@ -44,14 +44,16 @@ export class AuthInterceptor implements HttpInterceptor {
           this.router.navigate(['/forbidden']);
         }
 
-        // Résoudre le message : backend > swagger > générique
+        // Résoudre le message : backend JSON > backend string > swagger > générique
         let message: string;
 
         if (err.status === 0) {
-          message = getResponseMessage(req.method, req.url, 0)
-            || 'Le serveur est injoignable. Vérifiez que le backend est démarré.';
+          message = 'Le serveur est injoignable. Vérifiez que le backend est démarré.';
+        } else if (err.error && typeof err.error === 'object' && err.error.message) {
+          // Backend renvoie { rule, message, status } en JSON
+          message = err.error.message;
         } else if (typeof err.error === 'string' && err.error) {
-          // Le backend envoie le message d'erreur en string dans le body
+          // Backend envoie une string brute dans le body
           message = err.error;
         } else {
           message = getResponseMessage(req.method, req.url, err.status)
@@ -61,9 +63,12 @@ export class AuthInterceptor implements HttpInterceptor {
 
         this.notification.error(message);
 
+        // Renvoyer l'erreur enrichie pour que les composants puissent
+        // afficher des détails supplémentaires (ex: description RG)
         return throwError(() => ({
           status: err.status,
-          error: message,
+          error: err.error,
+          message: message,
           original: err
         }));
       })

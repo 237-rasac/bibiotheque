@@ -46,7 +46,7 @@ export class ReservationComponent implements OnInit {
       },
       error: (err) => {
         this.loading = false;
-        this.error = err.error;
+        // Toast error déjà affiché par l'interceptor
       }
     });
   }
@@ -81,7 +81,10 @@ export class ReservationComponent implements OnInit {
         this.formSubmitting = false;
         this.loadReservations();
       },
-      error: () => { this.formSubmitting = false; }
+      error: () => {
+        this.formSubmitting = false;
+        // Toast error déjà affiché par l'interceptor.
+      }
     });
   }
 
@@ -95,6 +98,9 @@ export class ReservationComponent implements OnInit {
         if (index !== -1) {
           this.reservations[index] = updated;
         }
+      },
+      error: () => {
+        // Toast error déjà affiché par l'interceptor.
       }
     });
   }

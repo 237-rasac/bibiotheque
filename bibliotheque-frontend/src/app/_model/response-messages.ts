@@ -106,6 +106,20 @@ export const RESPONSE_MESSAGES: Record<string, Record<number, string>> = {
 };
 
 /**
+ * Détails des règles de gestion (RG) métier.
+ * Clés = code du back-end (ex: "RG-01"), Valeur = message lisible côté front-end.
+ */
+export const BUSINESS_RULES: Record<string, string> = {
+  'RG-01': 'Un adhérent ne peut pas réserver un livre dont il est déjà en attente ou en cours d\'emprunt.',
+  'RG-02': 'Un adhérent ne peut pas réserver un livre qui est disponible (il doit l\'emprunter directement).',
+  'RG-03': 'Un adhérent ne peut pas dépasser le nombre maximum de réservations actives autorisées.',
+  'RG-04': 'La réservation est réservée aux livres marqués comme indisponibles.',
+  'RG-05': 'Seules les réservations avec le statut EN_ATTENTE ou DISPONIBLE peuvent être annulées.',
+  'RG-06': 'Un adhérent ne peut pas emprunter un livre qu\'il a déjà en cours d\'emprunt.',
+  'RG-07': 'Un livre ne peut pas être emprunté s\'il n\'a plus de copies disponibles.',
+};
+
+/**
  * Messages d'erreur génériques (hors swagger) pour les erreurs réseau/serveur.
  */
 export const GENERIC_MESSAGES: Record<number, string> = {
@@ -118,6 +132,16 @@ export const GENERIC_MESSAGES: Record<number, string> = {
   502: 'Le serveur est temporairement indisponible.',
   503: 'Service indisponible. Veuillez réessayer plus tard.',
 };
+
+/**
+ * Extrait les codes RG depuis un message d'erreur et retourne les descriptions lisible.
+ * Ex: "Règle métier violée (RG-01, RG-02, RG-03)." → ["RG-01 : description...", "RG-02 : ..."]
+ */
+export function extractRuleDetails(message: string): string[] {
+  const matches = message.match(/RG-\d+/g);
+  if (!matches) return [];
+  return matches.map(code => `${code} : ${BUSINESS_RULES[code] || 'Règle non définie.'}`);
+}
 
 /**
  * Convertit une URL réelle en pattern de clé swagger.

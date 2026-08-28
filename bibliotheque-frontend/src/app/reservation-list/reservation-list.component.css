@@ -2,6 +2,11 @@
   max-width: 300px;
 }
 
+.reservation-filter .ds-select {
+  min-width: 0;
+  box-sizing: border-box;
+}
+
 @media (max-width: 576px) {
   .reservation-filter {
     max-width: 100%;

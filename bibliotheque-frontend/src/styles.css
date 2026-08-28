@@ -97,7 +97,7 @@ p { color: var(--ds-text-secondary); line-height: var(--ds-leading-relaxed); mar
 
 .ds-form-group { margin-bottom: var(--ds-space-5); }
 .ds-label { display: block; font-size: var(--ds-text-sm); font-weight: 500; color: var(--ds-text); margin-bottom: var(--ds-space-2); }
-.ds-input, .ds-select, .ds-textarea { display: block; width: 100%; padding: var(--ds-space-2) var(--ds-space-3); font-family: var(--ds-font-sans); font-size: var(--ds-text-sm); line-height: 1.5; color: var(--ds-text); background: var(--ds-bg-elevated); border: 1px solid var(--ds-border); border-radius: var(--ds-radius); transition: border-color var(--ds-transition), box-shadow var(--ds-transition); appearance: none; }
+.ds-input, .ds-select, .ds-textarea { display: block; width: 100%; padding: var(--ds-space-2) var(--ds-space-3); font-family: var(--ds-font-sans); font-size: var(--ds-text-sm); line-height: 1.5; color: var(--ds-text); background: var(--ds-bg-elevated); border: 1px solid var(--ds-border); border-radius: var(--ds-radius); transition: border-color var(--ds-transition), box-shadow var(--ds-transition); appearance: none; box-sizing: border-box; min-width: 0; }
 .ds-input::placeholder { color: var(--ds-text-muted); }
 .ds-input:hover, .ds-select:hover { border-color: var(--ds-border-strong); }
 .ds-input:focus, .ds-select:focus { outline: none; border-color: var(--ds-border-focus); box-shadow: 0 0 0 3px var(--ds-primary-light); }
