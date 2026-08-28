@@ -1,0 +1,13 @@
+.page-header h2 {
+  font-size: var(--ds-text-3xl);
+}
+
+.page-header p {
+  font-size: var(--ds-text-sm);
+}
+
+@media (max-width: 576px) {
+  .page-header h2 {
+    font-size: var(--ds-text-2xl);
+  }
+}

@@ -8,6 +8,7 @@ import { BorrowService } from '../_service/borrow.service';
 import { UsersService } from '../_service/users.service';
 
 @Component({
+  standalone: false,
   selector: 'app-book-details',
   templateUrl: './book-details.component.html',
   styleUrls: ['./book-details.component.css']

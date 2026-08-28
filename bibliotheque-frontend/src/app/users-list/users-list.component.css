@@ -1,0 +1,10 @@
+.page-header {
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+
+@media (max-width: 576px) {
+  .page-header h2 {
+    font-size: var(--ds-text-2xl);
+  }
+}

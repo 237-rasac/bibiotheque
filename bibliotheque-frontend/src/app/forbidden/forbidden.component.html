@@ -1,3 +1,12 @@
-<div class="container">
-    <p class="forbidden text-center">You do not have access to this page.</p>
+<div class="ds-empty-state ds-animate-fadeIn" style="min-height: 60vh;">
+  <div style="font-size: 4rem; color: var(--ds-danger); opacity: 0.6; margin-bottom: 1rem;">
+    <i class="fa-solid fa-ban"></i>
+  </div>
+  <h2 style="margin-bottom: 0.5rem;">Access Denied</h2>
+  <p style="max-width: 400px;">
+    You do not have permission to access this page. Please contact your administrator.
+  </p>
+  <a routerLink="/" class="ds-btn ds-btn-primary ds-mt-4">
+    <i class="fa-solid fa-house"></i> Go Home
+  </a>
 </div>

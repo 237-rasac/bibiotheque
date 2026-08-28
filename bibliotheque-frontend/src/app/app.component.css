@@ -1,0 +1,22 @@
+.ds-main {
+  min-height: calc(100vh - 64px);
+}
+
+.ds-main-with-sidebar {
+  margin-left: 220px;
+  transition: margin-left 300ms cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.ds-main-with-sidebar .ds-main-content {
+  padding: 1.5rem 2rem 3rem;
+}
+
+.ds-main .ds-main-content {
+  padding: 1.5rem 2rem 3rem;
+}
+
+@media (max-width: 992px) {
+  .ds-main-with-sidebar {
+    margin-left: 0;
+  }
+}

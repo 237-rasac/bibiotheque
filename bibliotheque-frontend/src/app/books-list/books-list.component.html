@@ -1,27 +1,85 @@
-<h2>Book List</h2>
-<table class="table table-success table-striped">
+<div class="ds-flex ds-items-center ds-justify-between ds-mb-6 ds-animate-slideDown page-header">
+  <h2 style="margin: 0;"><i class="fa-solid fa-book" style="color: var(--ds-primary); margin-right: 0.5rem;"></i> Book List</h2>
+  <a routerLink="/create-book" class="ds-btn ds-btn-success ds-btn-sm">
+    <i class="fa-solid fa-plus"></i> Add Book
+  </a>
+</div>
+
+<!-- Skeleton loading -->
+<div *ngIf="loading" class="ds-table-wrapper ds-skeleton-fadeIn">
+  <table class="ds-skeleton-table">
     <thead>
-        <tr>
-            <th> Book ID </th>
-            <th> Name </th>
-            <th> Author </th>
-            <th> Genre </th>
-            <th> Number of copies available </th>
-            <th> Actions </th>
-        </tr>
+      <tr>
+        <th style="width: 60px;"></th>
+        <th style="width: 25%;"></th>
+        <th style="width: 20%;"></th>
+        <th style="width: 15%;"></th>
+        <th style="width: 80px;"></th>
+        <th style="width: 200px;"></th>
+      </tr>
     </thead>
     <tbody>
-        <tr *ngFor="let book of books">
-            <td> {{ book.bookId }} </td>
-            <td> {{ book.bookName }} </td>
-            <td> {{ book.bookAuthor }} </td>
-            <td> {{ book.bookGenre }} </td>
-            <td> {{ book.noOfCopies }} </td>
-            <td>
-                <button (click) = "bookDetails(book.bookId)" class="btn btn-success"> View </button>
-                <button (click) = "updateBook(book.bookId)" class="btn btn-info"  style="margin-left: 10px"> Edit </button>
-                <button (click) = "deleteBook(book.bookId)" class="btn btn-danger" style="margin-left: 10px"> Delete </button>                
-            </td>
-        </tr>
+      <tr *ngFor="let i of [1,2,3,4,5]" class="ds-skeleton-row">
+        <td><div class="ds-skeleton-bar w-20"></div></td>
+        <td><div class="ds-skeleton-bar w-70"></div></td>
+        <td><div class="ds-skeleton-bar w-60"></div></td>
+        <td><div class="ds-skeleton-badge"></div></td>
+        <td><div class="ds-skeleton-bar w-30"></div></td>
+        <td>
+          <div class="ds-table-actions">
+            <div class="ds-skeleton-btn"></div>
+            <div class="ds-skeleton-btn"></div>
+            <div class="ds-skeleton-btn"></div>
+          </div>
+        </td>
+      </tr>
     </tbody>
-</table>
+  </table>
+</div>
+
+<!-- Actual table -->
+<div *ngIf="!loading && books.length > 0" class="ds-table-wrapper ds-animate-slideUp">
+  <table class="ds-table">
+    <thead>
+      <tr>
+        <th>ID</th>
+        <th>Name</th>
+        <th>Author</th>
+        <th>Genre</th>
+        <th>Copies</th>
+        <th>Actions</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let book of books">
+        <td data-label="ID">{{ book.bookId }}</td>
+        <td data-label="Name"><strong>{{ book.bookName }}</strong></td>
+        <td data-label="Author">{{ book.bookAuthor }}</td>
+        <td data-label="Genre">
+          <span class="ds-badge ds-badge-info">{{ book.bookGenre }}</span>
+        </td>
+        <td data-label="Copies">{{ book.noOfCopies }}</td>
+        <td data-label="Actions">
+          <div class="ds-table-actions">
+            <button (click)="bookDetails(book.bookId)" class="ds-btn ds-btn-outline-primary ds-btn-sm">
+              <i class="fa-solid fa-eye"></i> View
+            </button>
+            <button (click)="updateBook(book.bookId)" class="ds-btn ds-btn-outline-secondary ds-btn-sm">
+              <i class="fa-solid fa-pen"></i> Edit
+            </button>
+            <button (click)="deleteBook(book.bookId)" class="ds-btn ds-btn-outline-danger ds-btn-sm">
+              <i class="fa-solid fa-trash"></i> Delete
+            </button>
+          </div>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+
+<!-- Empty state -->
+<div *ngIf="!loading && books.length === 0" class="ds-empty-state ds-animate-fadeIn">
+  <div class="ds-empty-state-icon"><i class="fa-solid fa-book"></i></div>
+  <div class="ds-empty-state-title">No books found</div>
+  <div class="ds-empty-state-text">The library catalog is empty. Add a book to get started.</div>
+</div>

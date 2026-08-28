@@ -4,6 +4,7 @@ import { Users } from '../_model/users';
 import { UsersService } from '../_service/users.service';
 
 @Component({
+  standalone: false,
   selector: 'app-registration',
   templateUrl: './registration.component.html',
   styleUrls: ['./registration.component.css']
@@ -11,6 +12,7 @@ import { UsersService } from '../_service/users.service';
 export class RegistrationComponent implements OnInit {
 
   user: Users = new Users();
+
   constructor(private usersService: UsersService,
     private router: Router) { }
 
@@ -18,11 +20,9 @@ export class RegistrationComponent implements OnInit {
   }
 
   saveUser() {
-    this.usersService.createUser(this.user).subscribe(data => {
-      console.log(data);
-      this.goToUsersList();
-    },
-    error => console.log(error));
+    this.usersService.createUser(this.user).subscribe({
+      next: () => { this.goToUsersList(); }
+    });
   }
 
   goToUsersList() {
@@ -30,7 +30,6 @@ export class RegistrationComponent implements OnInit {
   }
 
   onSubmit() {
-    console.log(this.user);
     this.saveUser();
   }
 

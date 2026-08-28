@@ -1,0 +1,17 @@
+<app-reservation-list
+  [reservations]="reservations"
+  [loading]="loading"
+  [error]="error"
+  [selectedStatut]="selectedStatut"
+  (statutChange)="onStatutChange($event)"
+  (cancel)="onAnnuler($event)"
+  (retry)="onRetry()">
+</app-reservation-list>
+
+<app-reservation-form
+  [books]="books"
+  [users]="users"
+  [submitting]="formSubmitting"
+  (submitForm)="onCreateReservation($event)">
+</app-reservation-form>
+

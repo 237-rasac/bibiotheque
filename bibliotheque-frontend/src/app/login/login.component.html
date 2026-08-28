@@ -1,14 +1,35 @@
-<div class="container col-md-6 offset-mid-3">
-<form autocomplete="off" #loginForm="ngForm" (ngSubmit)="login(loginForm)">
-    <div class="mb-3">
-      <label class="form-label" style="margin-top: 100px;">Username</label>
-      <input type="text" name="username" ngModel class="form-control" id="loginUsername" placeholder="Enter your username">
-      <div id="emailHelp" class="form-text">Username provided by the library admin.</div>
+<div class="login-wrapper">
+  <div class="ds-card ds-animate-scaleIn">
+    <div class="ds-card-body" style="padding: 2.5rem;">
+      <div class="ds-text-center" style="margin-bottom: 2rem;">
+        <div style="font-size: 2.5rem; color: var(--ds-primary); margin-bottom: 0.75rem;">
+          <i class="fa-solid fa-right-to-bracket"></i>
+        </div>
+        <h3 style="margin-bottom: 0.25rem;">Welcome Back</h3>
+        <p style="font-size: var(--ds-text-sm);">Sign in to your account</p>
+      </div>
+      <form autocomplete="off" #loginForm="ngForm" (ngSubmit)="login(loginForm)">
+        <div class="ds-form-group">
+          <label class="ds-label" for="loginUsername">
+            <i class="fa-solid fa-user" style="margin-right: 0.35rem;"></i> Username
+          </label>
+          <input type="text" name="username" ngModel class="ds-input" id="loginUsername" placeholder="Enter your username">
+          <span class="ds-help-text">Username provided by the library admin.</span>
+        </div>
+        <div class="ds-form-group">
+          <label class="ds-label" for="loginPassword">
+            <i class="fa-solid fa-lock" style="margin-right: 0.35rem;"></i> Password
+          </label>
+          <input type="password" name="password" ngModel class="ds-input" id="loginPassword" placeholder="Enter your password">
+        </div>
+        <div *ngIf="errorMessage" class="ds-alert ds-alert-danger ds-mb-4 ds-animate-fadeIn">
+          <i class="fa-solid fa-circle-exclamation"></i>
+          <div class="ds-alert-content">{{ errorMessage }}</div>
+        </div>
+        <button type="submit" class="ds-btn ds-btn-primary ds-btn-lg ds-w-full">
+          <i class="fa-solid fa-right-to-bracket"></i> Login
+        </button>
+      </form>
     </div>
-    <div class="mb-3">
-      <label class="form-label">Password</label>
-      <input type="password" name="password" ngModel class="form-control" id="loginPassword" placeholder="Enter your password">
-    </div>
-    <input type="submit" value="Login" class="btn btn-primary"/>
-  </form>
+  </div>
 </div>

@@ -4,13 +4,15 @@ import { Users } from '../_model/users';
 import { UsersService } from '../_service/users.service';
 
 @Component({
+  standalone: false,
   selector: 'app-users-list',
   templateUrl: './users-list.component.html',
   styleUrls: ['./users-list.component.css']
 })
 export class UsersListComponent implements OnInit {
 
-  users: Users[];
+  users: Users[] = [];
+  loading = true;
 
   constructor(private usersService: UsersService,
     private router: Router) { }
@@ -27,9 +29,10 @@ export class UsersListComponent implements OnInit {
   }
 
   private getUsers() {
-    this.usersService.getUsersList().subscribe(data =>{
-      this.users = data;
-      console.log(this.users);
+    this.loading = true;
+    this.usersService.getUsersList().subscribe({
+      next: (data) => { this.users = data; this.loading = false; },
+      error: () => { this.loading = false; }
     });
   }
 

@@ -1,0 +1,9 @@
+.reservation-filter {
+  max-width: 300px;
+}
+
+@media (max-width: 576px) {
+  .reservation-filter {
+    max-width: 100%;
+  }
+}

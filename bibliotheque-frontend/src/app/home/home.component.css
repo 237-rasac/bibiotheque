@@ -1,4 +1,10 @@
-.home {
-    margin-top: 200px;
-    font-size: 80px;
+.home-hero {
+  min-height: 60vh;
+}
+
+@media (max-width: 576px) {
+  .home-hero {
+    min-height: 50vh;
+    padding: 0 1rem;
+  }
 }

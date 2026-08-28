@@ -4,13 +4,15 @@ import { Books } from '../_model/books'
 import { BooksService } from '../_service/books.service';
 
 @Component({
+  standalone: false,
   selector: 'app-books-list',
   templateUrl: './books-list.component.html',
   styleUrls: ['./books-list.component.css']
 })
 export class BooksListComponent implements OnInit {
 
-  books: Books[];
+  books: Books[] = [];
+  loading = true;
 
   constructor(private booksService: BooksService,
     private router: Router) { }
@@ -20,8 +22,10 @@ export class BooksListComponent implements OnInit {
   }
 
   private getBooks() {
-    this.booksService.getBooksList().subscribe(data =>{
-      this.books = data;
+    this.loading = true;
+    this.booksService.getBooksList().subscribe({
+      next: (data) => { this.books = data; this.loading = false; },
+      error: () => { this.loading = false; }
     });
   }
 

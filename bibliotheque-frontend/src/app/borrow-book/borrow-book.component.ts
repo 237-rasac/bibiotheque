@@ -6,13 +6,15 @@ import { BorrowService } from '../_service/borrow.service';
 import { UserAuthService } from '../_service/user-auth.service';
 
 @Component({
+  standalone: false,
   selector: 'app-borrow-book',
   templateUrl: './borrow-book.component.html',
   styleUrls: ['./borrow-book.component.css']
 })
 export class BorrowBookComponent implements OnInit {
 
-  books: Books[];
+  books: Books[] = [];
+  loading = true;
 
   constructor(
     private booksService: BooksService,
@@ -26,9 +28,11 @@ export class BorrowBookComponent implements OnInit {
     this.getBooks();
   }
 
-  private getBooks() {
-    this.booksService.getBooksList().subscribe(data =>{
-      this.books = data;
+  getBooks() {
+    this.loading = true;
+    this.booksService.getBooksList().subscribe({
+      next: (data) => { this.books = data; this.loading = false; },
+      error: () => { this.loading = false; }
     });
   }
 
@@ -37,10 +41,8 @@ export class BorrowBookComponent implements OnInit {
   borrowBook(bookId: number) {
     this.borrow.bookId = bookId;
     this.borrow.userId = this.userId;
-    console.log(this.borrow);
-    this.borrowService.borrowBook(this.borrow).subscribe(data => {
-      console.log(data);
-    },
-    error => console.log(error));
+    this.borrowService.borrowBook(this.borrow).subscribe({
+      next: () => { this.getBooks(); }
+    });
   }
 }

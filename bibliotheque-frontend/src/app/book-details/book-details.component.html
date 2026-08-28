@@ -1,23 +1,36 @@
-<h2>Borrow history of {{ book.bookName }}</h2>
-<table class="table table-info table-striped">
+<div class="ds-mb-6 ds-animate-slideDown page-header">
+  <a routerLink="/books" class="ds-btn ds-btn-ghost ds-btn-sm" style="margin-bottom: 0.75rem; display: inline-flex;">
+    <i class="fa-solid fa-arrow-left"></i> Back to Books
+  </a>
+  <h2><i class="fa-solid fa-clock-rotate-left" style="color: var(--ds-info); margin-right: 0.5rem;"></i> Borrow History: {{ book.bookName }}</h2>
+</div>
+
+<div class="ds-table-wrapper ds-animate-slideUp">
+  <table class="ds-table">
     <thead>
-        <tr>
-            <th> User ID </th>
-            <th> Issue Date </th>
-            <th> Return Date </th>
-        </tr>
+      <tr>
+        <th>User ID</th>
+        <th>Issue Date</th>
+        <th>Return Date</th>
+      </tr>
     </thead>
     <tbody>
-        <tr *ngFor="let borrower of borrow">
-            <!-- <td> {{ getUserData(borrower.userId) }} </td> -->
-            <td> {{ borrower.userId }} </td>
-            <td> {{ borrower.issueDate }} </td>
-            <div *ngIf="borrower.returnDate != null">
-                <td> {{ borrower.returnDate }} </td>
-            </div>
-            <div *ngIf="borrower.returnDate === null">
-                <td> Book not returned yet </td>
-            </div>
-        </tr>
+      <tr *ngFor="let borrower of borrow">
+        <td data-label="User ID">{{ borrower.userId }}</td>
+        <td data-label="Issue Date">{{ borrower.issueDate }}</td>
+        <td data-label="Return Date">
+          <span *ngIf="borrower.returnDate != null">{{ borrower.returnDate }}</span>
+          <span *ngIf="borrower.returnDate === null" class="ds-badge ds-badge-warning">
+            <i class="fa-solid fa-clock"></i> Not returned
+          </span>
+        </td>
+      </tr>
     </tbody>
-</table>
+  </table>
+</div>
+
+<div *ngIf="!borrow || borrow.length === 0" class="ds-empty-state ds-mt-6 ds-animate-fadeIn">
+  <div class="ds-empty-state-icon"><i class="fa-solid fa-inbox"></i></div>
+  <div class="ds-empty-state-title">No borrow history</div>
+  <div class="ds-empty-state-text">This book has not been borrowed yet.</div>
+</div>

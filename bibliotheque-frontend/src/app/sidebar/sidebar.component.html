@@ -1,0 +1,78 @@
+<!-- Mobile toggle button (floating) -->
+<button
+  *ngIf="isLoggedIn()"
+  class="ds-sidebar-mobile-toggle"
+  (click)="toggleMobile()"
+  [attr.aria-label]="mobileOpen ? 'Close menu' : 'Open menu'"
+  [attr.aria-expanded]="mobileOpen">
+  <i class="fa-solid" [class.fa-bars]="!mobileOpen" [class.fa-xmark]="mobileOpen"></i>
+</button>
+
+<!-- Backdrop overlay -->
+<div
+  *ngIf="isLoggedIn() && mobileOpen"
+  class="ds-sidebar-backdrop"
+  (click)="closeMobile()">
+</div>
+
+<!-- Sidebar -->
+<aside
+  class="ds-sidebar"
+  [class.ds-sidebar-collapsed]="collapsed"
+  [class.ds-sidebar-mobile-open]="mobileOpen"
+  *ngIf="isLoggedIn()">
+
+  <!-- Desktop collapse toggle -->
+  <button class="ds-sidebar-toggle ds-sidebar-toggle-desktop" (click)="toggleCollapse()" [title]="collapsed ? 'Expand sidebar' : 'Collapse sidebar'">
+    <i class="fa-solid" [class.fa-angles-left]="!collapsed" [class.fa-angles-right]="collapsed"></i>
+  </button>
+
+  <!-- Navigation links -->
+  <nav class="ds-sidebar-nav">
+    <ul class="ds-sidebar-links">
+      <!-- Admin links -->
+      <li *ngIf="userService.roleMatch(['Admin'])">
+        <a routerLink="/books" routerLinkActive="active" class="ds-sidebar-link" [title]="collapsed ? 'Books' : ''">
+          <i class="fa-solid fa-book"></i>
+          <span class="ds-sidebar-label">Books</span>
+        </a>
+      </li>
+
+      <li *ngIf="userService.roleMatch(['Admin'])">
+        <a routerLink="/users" routerLinkActive="active" class="ds-sidebar-link" [title]="collapsed ? 'Users' : ''">
+          <i class="fa-solid fa-users"></i>
+          <span class="ds-sidebar-label">Users</span>
+        </a>
+      </li>
+
+      <li *ngIf="userService.roleMatch(['Admin'])">
+        <a routerLink="/reservations" routerLinkActive="active" class="ds-sidebar-link" [title]="collapsed ? 'Reservations' : ''">
+          <i class="fa-solid fa-calendar-check"></i>
+          <span class="ds-sidebar-label">Reservations</span>
+        </a>
+      </li>
+
+      <!-- User links -->
+      <li *ngIf="userService.roleMatch(['User'])">
+        <a routerLink="/borrow-book" routerLinkActive="active" class="ds-sidebar-link" [title]="collapsed ? 'Borrow' : ''">
+          <i class="fa-solid fa-book-reader"></i>
+          <span class="ds-sidebar-label">Borrow</span>
+        </a>
+      </li>
+      <li *ngIf="userService.roleMatch(['User'])">
+        <a routerLink="/return-book" routerLinkActive="active" class="ds-sidebar-link" [title]="collapsed ? 'Return' : ''">
+          <i class="fa-solid fa-rotate-left"></i>
+          <span class="ds-sidebar-label">Return</span>
+        </a>
+      </li>
+    </ul>
+  </nav>
+
+  <!-- Sidebar footer -->
+  <div class="ds-sidebar-footer">
+    <a routerLink="/" class="ds-sidebar-link" [title]="collapsed ? 'Home' : ''">
+      <i class="fa-solid fa-house"></i>
+      <span class="ds-sidebar-label">Home</span>
+    </a>
+  </div>
+</aside>

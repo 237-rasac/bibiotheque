@@ -1,0 +1,117 @@
+<div class="ds-mb-6 ds-animate-slideDown">
+  <h2><i class="fa-solid fa-calendar-check" style="color: var(--ds-accent); margin-right: 0.5rem;"></i> Reservations</h2>
+</div>
+
+<!-- Filter -->
+<div class="ds-form-group ds-animate-fadeIn reservation-filter">
+  <label class="ds-label" for="statutFilter">
+    <i class="fa-solid fa-filter" style="margin-right: 0.3rem;"></i> Filter by status
+  </label>
+  <select
+    id="statutFilter"
+    class="ds-select"
+    [ngModel]="selectedStatut"
+    (ngModelChange)="onStatutChange($event)">
+    <option *ngFor="let statut of statuts" [value]="statut">
+      {{ statut === 'TOUS' ? 'All statuses' : statut }}
+    </option>
+  </select>
+</div>
+
+<!-- Loading skeleton -->
+<div *ngIf="loading" class="ds-skeleton-fadeIn">
+  <div class="ds-table-wrapper">
+    <table class="ds-skeleton-table">
+      <thead>
+        <tr>
+          <th style="width: 20%;"></th>
+          <th style="width: 20%;"></th>
+          <th style="width: 15%;"></th>
+          <th style="width: 15%;"></th>
+          <th style="width: 15%;"></th>
+          <th style="width: 100px;"></th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let i of [1,2,3,4,5]" class="ds-skeleton-row">
+          <td><div class="ds-skeleton-bar w-70"></div></td>
+          <td><div class="ds-skeleton-bar w-50"></div></td>
+          <td><div class="ds-skeleton-badge"></div></td>
+          <td><div class="ds-skeleton-bar w-40"></div></td>
+          <td><div class="ds-skeleton-bar w-40"></div></td>
+          <td><div class="ds-skeleton-btn"></div></td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+  <span class="ds-text-sm" style="margin-top: 0.75rem;">Loading reservations...</span>
+</div>
+
+<!-- Error -->
+<div *ngIf="error && !loading" class="ds-alert ds-alert-danger ds-animate-scaleIn">
+  <i class="fa-solid fa-circle-exclamation"></i>
+  <div class="ds-alert-content">
+    <div class="ds-alert-title">Error</div>
+    <div>{{ error }}</div>
+  </div>
+  <button class="ds-btn ds-btn-outline-danger ds-btn-sm" (click)="onRetry()">
+    <i class="fa-solid fa-rotate"></i> Retry
+  </button>
+</div>
+
+<!-- Empty -->
+<div *ngIf="!loading && !error && reservations.length === 0" class="ds-empty-state ds-animate-fadeIn">
+  <div class="ds-empty-state-icon"><i class="fa-solid fa-calendar-xmark"></i></div>
+  <div class="ds-empty-state-title">No reservations</div>
+  <div class="ds-empty-state-text">There are no reservations matching the current filter.</div>
+</div>
+
+<!-- Table -->
+<div *ngIf="!loading && !error && reservations.length > 0" class="ds-table-wrapper ds-animate-slideUp">
+  <table class="ds-table">
+    <thead>
+      <tr>
+        <th>Book</th>
+        <th>Member</th>
+        <th>Status</th>
+        <th>Reserved</th>
+        <th>Expires</th>
+        <th>Actions</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let reservation of reservations">
+        <td data-label="Book"><strong>{{ reservation.livreName }}</strong></td>
+        <td data-label="Member">{{ reservation.adherentName }}</td>
+        <td data-label="Status">
+          <span class="ds-badge"
+            [ngClass]="{
+              'ds-badge-warning': reservation.statut === 'EN_ATTENTE',
+              'ds-badge-success': reservation.statut === 'DISPONIBLE',
+              'ds-badge-secondary': reservation.statut === 'ANNULEE',
+              'ds-badge-danger': reservation.statut === 'EXPIREE',
+              'ds-badge-info': reservation.statut === 'HONOREE'
+            }">
+            <i class="fa-solid"
+              [class.fa-hourglass-half]="reservation.statut === 'EN_ATTENTE'"
+              [class.fa-circle-check]="reservation.statut === 'DISPONIBLE'"
+              [class.fa-ban]="reservation.statut === 'ANNULEE'"
+              [class.fa-clock]="reservation.statut === 'EXPIREE'"
+              [class.fa-star]="reservation.statut === 'HONOREE'"></i>
+            {{ reservation.statut }}
+          </span>
+        </td>
+        <td data-label="Reserved">{{ formatDate(reservation.dateReservation) }}</td>
+        <td data-label="Expires">{{ formatDate(reservation.dateExpiration) }}</td>
+        <td data-label="Actions">
+          <button
+            *ngIf="isAnnulable(reservation.statut)"
+            class="ds-btn ds-btn-outline-danger ds-btn-sm"
+            (click)="onAnnuler(reservation.reservationId)">
+            <i class="fa-solid fa-xmark"></i> Cancel
+          </button>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+</div>

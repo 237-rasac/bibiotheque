@@ -1,0 +1,9 @@
+@media (max-width: 576px) {
+  .reservation-form-card .ds-card-header {
+    padding: var(--ds-space-3) var(--ds-space-4);
+  }
+
+  .reservation-form-card .ds-card-body {
+    padding: var(--ds-space-4);
+  }
+}

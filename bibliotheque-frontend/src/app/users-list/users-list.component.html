@@ -1,29 +1,82 @@
-<h2>User List</h2>
-<table class="table table-success table-striped">
+<div class="ds-flex ds-items-center ds-justify-between ds-mb-6 ds-animate-slideDown page-header">
+  <h2 style="margin: 0;"><i class="fa-solid fa-users" style="color: var(--ds-secondary); margin-right: 0.5rem;"></i> User List</h2>
+  <a routerLink="/register-user" class="ds-btn ds-btn-success ds-btn-sm">
+    <i class="fa-solid fa-user-plus"></i> Add User
+  </a>
+</div>
+
+<!-- Skeleton loading -->
+<div *ngIf="loading" class="ds-table-wrapper ds-skeleton-fadeIn">
+  <table class="ds-skeleton-table">
     <thead>
-        <tr>
-            <th> User ID </th>
-            <th> Name </th>
-            <th> Username </th>
-            <th> Role </th>
-            <th> View History </th>
-            <th> Edit User </th>
-        </tr>
+      <tr>
+        <th style="width: 60px;"></th>
+        <th style="width: 25%;"></th>
+        <th style="width: 25%;"></th>
+        <th style="width: 15%;"></th>
+        <th style="width: 140px;"></th>
+      </tr>
     </thead>
     <tbody>
-        <tr *ngFor="let user of users">
-            <td> {{ user.userId }} </td>
-            <td> {{ user.name }} </td>
-            <td> {{ user.username }} </td>
-            <td> {{ user.role[0].roleName }} </td>
-            <td>        
-                <div *ngIf="user.role[0].roleName === 'User'">
-                    <button (click) = "userDetails(user.userId)" class="btn btn-success"> View </button>
-                </div>
-            </td>
-            <td>
-                <button (click) = "updateUser(user.userId)" class="btn btn-info"> Edit </button> 
-            </td>
-        </tr>
+      <tr *ngFor="let i of [1,2,3,4,5]" class="ds-skeleton-row">
+        <td><div class="ds-skeleton-bar w-20"></div></td>
+        <td><div class="ds-skeleton-bar w-60"></div></td>
+        <td><div class="ds-skeleton-bar w-50"></div></td>
+        <td><div class="ds-skeleton-badge"></div></td>
+        <td>
+          <div class="ds-table-actions">
+            <div class="ds-skeleton-btn"></div>
+            <div class="ds-skeleton-btn"></div>
+          </div>
+        </td>
+      </tr>
     </tbody>
-</table>
+  </table>
+</div>
+
+<!-- Actual table -->
+<div *ngIf="!loading && users.length > 0" class="ds-table-wrapper ds-animate-slideUp">
+  <table class="ds-table">
+    <thead>
+      <tr>
+        <th>ID</th>
+        <th>Name</th>
+        <th>Username</th>
+        <th>Role</th>
+        <th>Actions</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let user of users">
+        <td data-label="ID">{{ user.userId }}</td>
+        <td data-label="Name"><strong>{{ user.name }}</strong></td>
+        <td data-label="Username">{{ user.username }}</td>
+        <td data-label="Role">
+          <span class="ds-badge" [class.ds-badge-primary]="user.role[0].roleName === 'Admin'" [class.ds-badge-info]="user.role[0].roleName === 'User'">
+            <i class="fa-solid" [class.fa-shield-halved]="user.role[0].roleName === 'Admin'" [class.fa-user]="user.role[0].roleName === 'User'"></i>
+            {{ user.role[0].roleName }}
+          </span>
+        </td>
+        <td data-label="Actions">
+          <div class="ds-table-actions">
+            <div *ngIf="user.role[0].roleName === 'User'">
+              <button (click)="userDetails(user.userId)" class="ds-btn ds-btn-outline-primary ds-btn-sm">
+                <i class="fa-solid fa-eye"></i> View
+              </button>
+            </div>
+            <button (click)="updateUser(user.userId)" class="ds-btn ds-btn-outline-secondary ds-btn-sm">
+              <i class="fa-solid fa-pen"></i> Edit
+            </button>
+          </div>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+
+<!-- Empty state -->
+<div *ngIf="!loading && users.length === 0" class="ds-empty-state ds-animate-fadeIn">
+  <div class="ds-empty-state-icon"><i class="fa-solid fa-users"></i></div>
+  <div class="ds-empty-state-title">No users found</div>
+  <div class="ds-empty-state-text">No users have been registered yet.</div>
+</div>

@@ -7,14 +7,16 @@ import { BorrowService } from '../_service/borrow.service';
 import { UserAuthService } from '../_service/user-auth.service';
 
 @Component({
+  standalone: false,
   selector: 'app-return-book',
   templateUrl: './return-book.component.html',
   styleUrls: ['./return-book.component.css']
 })
 export class ReturnBookComponent implements OnInit {
 
-  books: Books[];
-  borrow: Borrow[];
+  books: Books[] = [];
+  borrow: Borrow[] = [];
+  loading = true;
 
   constructor(
     private borrowService: BorrowService,
@@ -30,25 +32,26 @@ export class ReturnBookComponent implements OnInit {
   }
 
   private getBooks() {
-    this.booksService.getBooksList().subscribe(data =>{
-      this.books = data;
+    this.booksService.getBooksList().subscribe({
+      next: (data) => { this.books = data; }
     });
   }
 
-  
-  private getBooksByUser() {
-    this.borrowService.getBooksBorrowedByUser(this.userId).subscribe(data => {
-      this.borrow = data;
-    })
+  getBooksByUser() {
+    this.loading = true;
+    this.borrowService.getBooksBorrowedByUser(this.userId).subscribe({
+      next: (data) => { this.borrow = data; this.loading = false; },
+      error: () => { this.loading = false; }
+    });
   }
 
   brw: Borrow = new Borrow();
-  public returnBook(borrowId: number) {
+
+  returnBook(borrowId: number) {
     this.brw.borrowId = borrowId;
-    this.borrowService.returnBook(this.brw).subscribe(data => {
-      console.log(data);
-    },
-    error => console.log(error));
+    this.borrowService.returnBook(this.brw).subscribe({
+      next: () => { this.getBooksByUser(); }
+    });
   }
 
 }
