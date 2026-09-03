@@ -1,0 +1,148 @@
+<div class="ds-mb-6 ds-animate-slideDown page-header">
+  <a routerLink="/reservations" class="ds-btn ds-btn-ghost ds-btn-sm" style="margin-bottom: 0.75rem; display: inline-flex;">
+    <i class="fa-solid fa-arrow-left"></i> Back to Reservations
+  </a>
+  <h2><i class="fa-solid fa-calendar-check" style="color: var(--ds-accent); margin-right: 0.5rem;"></i> Reservation Details</h2>
+</div>
+
+<!-- Loading skeleton -->
+<div *ngIf="loading" class="ds-skeleton-fadeIn ds-animate-fadeIn">
+  <div class="details-card">
+    <div class="details-grid">
+      <div class="details-field">
+        <div class="ds-skeleton-bar w-30" style="margin-bottom: 0.5rem;"></div>
+        <div class="ds-skeleton-bar w-60"></div>
+      </div>
+      <div class="details-field">
+        <div class="ds-skeleton-bar w-30" style="margin-bottom: 0.5rem;"></div>
+        <div class="ds-skeleton-bar w-60"></div>
+      </div>
+      <div class="details-field">
+        <div class="ds-skeleton-bar w-30" style="margin-bottom: 0.5rem;"></div>
+        <div class="ds-skeleton-badge"></div>
+      </div>
+      <div class="details-field">
+        <div class="ds-skeleton-bar w-30" style="margin-bottom: 0.5rem;"></div>
+        <div class="ds-skeleton-bar w-60"></div>
+      </div>
+      <div class="details-field">
+        <div class="ds-skeleton-bar w-30" style="margin-bottom: 0.5rem;"></div>
+        <div class="ds-skeleton-bar w-60"></div>
+      </div>
+      <div class="details-field">
+        <div class="ds-skeleton-bar w-30" style="margin-bottom: 0.5rem;"></div>
+        <div class="ds-skeleton-bar w-60"></div>
+      </div>
+    </div>
+  </div>
+  <span class="ds-text-sm" style="margin-top: 0.75rem;">Loading reservation...</span>
+</div>
+
+<!-- Error -->
+<div *ngIf="error && !loading" class="ds-alert ds-alert-danger ds-animate-scaleIn">
+  <i class="fa-solid fa-circle-exclamation"></i>
+  <div class="ds-alert-content">
+    <div class="ds-alert-title">Error</div>
+    <div>{{ error }}</div>
+  </div>
+  <button class="ds-btn ds-btn-outline-danger ds-btn-sm" (click)="loadReservation()">
+    <i class="fa-solid fa-rotate"></i> Retry
+  </button>
+</div>
+
+<!-- Reservation details card -->
+<div *ngIf="!loading && !error" class="ds-animate-slideUp">
+  <div class="details-card">
+    <div class="details-card-header">
+      <button
+        class="ds-btn ds-btn-outline-danger ds-btn-sm"
+        (click)="openDeleteModal()">
+        <i class="fa-solid fa-trash"></i> Delete
+      </button>
+      <span class="ds-badge"
+        [ngClass]="{
+          'ds-badge-warning': reservation.statut === 'EN_ATTENTE',
+          'ds-badge-success': reservation.statut === 'DISPONIBLE',
+          'ds-badge-secondary': reservation.statut === 'ANNULEE',
+          'ds-badge-danger': reservation.statut === 'EXPIREE',
+          'ds-badge-info': reservation.statut === 'HONOREE'
+        }">
+        <i class="fa-solid"
+          [class.fa-hourglass-half]="reservation.statut === 'EN_ATTENTE'"
+          [class.fa-circle-check]="reservation.statut === 'DISPONIBLE'"
+          [class.fa-ban]="reservation.statut === 'ANNULEE'"
+          [class.fa-clock]="reservation.statut === 'EXPIREE'"
+          [class.fa-star]="reservation.statut === 'HONOREE'"></i>
+        {{ reservation.statut }}
+      </span>
+    </div>
+
+    <div class="details-grid">
+      <div class="details-field">
+        <div class="details-label">
+          <i class="fa-solid fa-hashtag"></i> Reservation ID
+        </div>
+        <div class="details-value">{{ reservation.reservationId }}</div>
+      </div>
+
+      <div class="details-field">
+        <div class="details-label">
+          <i class="fa-solid fa-book"></i> Book
+        </div>
+        <div class="details-value">{{ reservation.livreName }}</div>
+      </div>
+
+      <div class="details-field">
+        <div class="details-label">
+          <i class="fa-solid fa-user"></i> Member
+        </div>
+        <div class="details-value">{{ reservation.adherentName }}</div>
+      </div>
+
+      <div class="details-field">
+        <div class="details-label">
+          <i class="fa-solid fa-calendar-plus"></i> Reservation Date
+        </div>
+        <div class="details-value">{{ formatDate(reservation.dateReservation) }}</div>
+      </div>
+
+      <div class="details-field">
+        <div class="details-label">
+          <i class="fa-solid fa-calendar-xmark"></i> Expiration Date
+        </div>
+        <div class="details-value">{{ formatDate(reservation.dateExpiration) }}</div>
+      </div>
+
+      <div class="details-field">
+        <div class="details-label">
+          <i class="fa-solid fa-id-card"></i> Book ID
+        </div>
+        <div class="details-value">{{ reservation.livreId }}</div>
+      </div>
+
+      <div class="details-field">
+        <div class="details-label">
+          <i class="fa-solid fa-id-badge"></i> Member ID
+        </div>
+        <div class="details-value">{{ reservation.adherentId }}</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Delete confirmation modal -->
+<app-confirm-modal
+  [show]="showDeleteModal"
+  title="Delete Reservation"
+  message="Are you sure you want to delete this reservation?"
+  [details]="deleteModalDetails"
+  warning="This action cannot be undone."
+  iconClass="fa-solid fa-triangle-exclamation"
+  confirmText="Delete"
+  cancelText="Cancel"
+  confirmIconClass="fa-solid fa-trash"
+  loadingText="Deleting..."
+  [loading]="deleting"
+  (confirm)="confirmDelete()"
+  (cancel)="closeDeleteModal()">
+</app-confirm-modal>

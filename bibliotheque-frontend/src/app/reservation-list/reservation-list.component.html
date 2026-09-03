@@ -80,7 +80,9 @@
       </tr>
     </thead>
     <tbody>
-      <tr *ngFor="let reservation of reservations">
+      <tr *ngFor="let reservation of reservations"
+          class="reservation-row"
+          [routerLink]="['/reservation-details', reservation.reservationId]">
         <td data-label="Book"><strong>{{ reservation.livreName }}</strong></td>
         <td data-label="Member">{{ reservation.adherentName }}</td>
         <td data-label="Status">
@@ -107,7 +109,7 @@
           <button
             *ngIf="isAnnulable(reservation.statut)"
             class="ds-btn ds-btn-outline-danger ds-btn-sm"
-            (click)="onAnnuler(reservation.reservationId)">
+            (click)="$event.stopPropagation(); openCancelModal(reservation)">
             <i class="fa-solid fa-xmark"></i> Cancel
           </button>
         </td>
@@ -115,3 +117,20 @@
     </tbody>
   </table>
 </div>
+
+<!-- Cancel confirmation modal -->
+<app-confirm-modal
+  [show]="showCancelModal"
+  title="Cancel Reservation"
+  message="Are you sure you want to cancel this reservation?"
+  [details]="cancelModalDetails"
+  warning="This action cannot be undone."
+  iconClass="fa-solid fa-circle-xmark"
+  confirmText="Cancel Reservation"
+  cancelText="Back"
+  confirmIconClass="fa-solid fa-xmark"
+  loadingText="Cancelling..."
+  [loading]="cancelling"
+  (confirm)="confirmCancel()"
+  (cancel)="closeCancelModal()">
+</app-confirm-modal>

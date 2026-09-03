@@ -27,7 +27,9 @@ import { ReturnBookComponent } from './return-book/return-book.component';
 import { ReservationComponent } from './reservation/reservation.component';
 import { ReservationListComponent } from './reservation-list/reservation-list.component';
 import { ReservationFormComponent } from './reservation-form/reservation-form.component';
+import { ReservationDetailsComponent } from './reservation-details/reservation-details.component';
 import { SidebarComponent } from './sidebar/sidebar.component';
+import { ConfirmModalComponent } from './confirm-modal/confirm-modal.component';
 import { NotificationComponent } from './notification/notification.component';
 
 @NgModule({
@@ -51,8 +53,10 @@ import { NotificationComponent } from './notification/notification.component';
     ReservationComponent,
     ReservationListComponent,
     ReservationFormComponent,
+    ReservationDetailsComponent,
     SidebarComponent,
     NotificationComponent,
+    ConfirmModalComponent,
   ],
   imports: [
     BrowserModule,

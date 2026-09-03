@@ -3,6 +3,7 @@
   [loading]="loading"
   [error]="error"
   [selectedStatut]="selectedStatut"
+  [cancelling]="cancelling"
   (statutChange)="onStatutChange($event)"
   (cancel)="onAnnuler($event)"
   (retry)="onRetry()">
@@ -14,4 +15,3 @@
   [submitting]="formSubmitting"
   (submitForm)="onCreateReservation($event)">
 </app-reservation-form>
-

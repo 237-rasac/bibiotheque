@@ -23,6 +23,7 @@ export class ReservationComponent implements OnInit {
   selectedStatut = 'TOUS';
 
   formSubmitting = false;
+  cancelling = false;
 
   constructor(
     private reservationService: ReservationService,
@@ -89,17 +90,17 @@ export class ReservationComponent implements OnInit {
   }
 
   onAnnuler(id: number) {
-    const confirmed = confirm('Êtes-vous sûr de vouloir annuler cette réservation ?');
-    if (!confirmed) return;
-
+    this.cancelling = true;
     this.reservationService.cancelReservation(id).subscribe({
       next: (updated) => {
         const index = this.reservations.findIndex(r => r.reservationId === id);
         if (index !== -1) {
           this.reservations[index] = updated;
         }
+        this.cancelling = false;
       },
       error: () => {
+        this.cancelling = false;
         // Toast error déjà affiché par l'interceptor.
       }
     });
