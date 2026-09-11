@@ -50,7 +50,8 @@ export class ReturnBookComponent implements OnInit {
   returnBook(borrowId: number) {
     this.brw.borrowId = borrowId;
     this.borrowService.returnBook(this.brw).subscribe({
-      next: () => { this.getBooksByUser(); }
+      next: () => { this.getBooksByUser(); },
+      error: () => { /* toast handled by interceptor */ }
     });
   }
 

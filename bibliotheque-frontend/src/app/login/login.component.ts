@@ -27,8 +27,8 @@ export class LoginComponent implements OnInit {
 
   login(loginForm: NgForm) {
     this.errorMessage = null;
-    this.userService.login(loginForm.value).subscribe(
-      (response: any) => {
+    this.userService.login(loginForm.value).subscribe({
+      next: (response: any) => {
         this.userAuthSerivce.setRoles(response.user.role);
         this.userAuthSerivce.setToken(response.jwtToken);
         this.userAuthSerivce.setUserId(response.user.userId);
@@ -38,17 +38,17 @@ export class LoginComponent implements OnInit {
         if (successMsg) { this.notification.success(successMsg); }
 
         const role = response.user.role[0].roleName;
-        if (role === 'Admin') {
+        if (role === 'BIBLIOTHECAIRE') {
           this.router.navigate(['/books']);
         } else {
           this.router.navigate(['/borrow-book']);
         }
       },
-      (error) => {
-        this.errorMessage = getResponseMessage('POST', '/authenticate', error.status)
-          || error.error
+      error: (err) => {
+        this.errorMessage = err.message
+          || getResponseMessage('POST', '/authenticate', err.status)
           || 'Identifiants incorrects.';
       }
-    );
+    });
   }
 }

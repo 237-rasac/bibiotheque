@@ -133,21 +133,6 @@
 
 **URL :** `GET /admin/users/1`
 
-**Réponse 200 :**
-```json
-{
-  "userId": 1,
-  "username": "admin",
-  "name": "Administrateur",
-  "role": [
-    {
-      "roleId": 1,
-      "roleName": "Admin"
-    }
-  ]
-}
-```
-
 ---
 
 ### `PUT /admin/users/{id}` — Modifier un utilisateur
@@ -169,21 +154,6 @@
 }
 ```
 
-**Réponse 200 :**
-```json
-{
-  "userId": 2,
-  "username": "jean.dupont",
-  "name": "Jean Dupont Modified",
-  "role": [
-    {
-      "roleId": 3,
-      "roleName": "User"
-    }
-  ]
-}
-```
-
 ---
 
 ## 📖 Gestion des Livres (BooksController)
@@ -192,26 +162,6 @@
 
 > ❌ Pas de token requis
 
-**Réponse 200 :**
-```json
-[
-  {
-    "bookId": 1,
-    "bookName": "Le Petit Prince",
-    "bookAuthor": "Antoine de Saint-Exupéry",
-    "bookGenre": "Conte",
-    "noOfCopies": 3
-  },
-  {
-    "bookId": 2,
-    "bookName": "L'Étranger",
-    "bookAuthor": "Albert Camus",
-    "bookGenre": "Roman",
-    "noOfCopies": 5
-  }
-]
-```
-
 ---
 
 ### `GET /admin/books/{id}` — Obtenir un livre par ID
@@ -219,17 +169,6 @@
 > ✅ Nécessite `Authorization: Bearer <token>` avec le rôle **Admin**
 
 **URL :** `GET /admin/books/1`
-
-**Réponse 200 :**
-```json
-{
-  "bookId": 1,
-  "bookName": "Le Petit Prince",
-  "bookAuthor": "Antoine de Saint-Exupéry",
-  "bookGenre": "Conte",
-  "noOfCopies": 3
-}
-```
 
 ---
 
@@ -247,45 +186,11 @@
 }
 ```
 
-**Réponse 200 :**
-```json
-{
-  "bookId": 3,
-  "bookName": "Les Misérables",
-  "bookAuthor": "Victor Hugo",
-  "bookGenre": "Roman",
-  "noOfCopies": 10
-}
-```
-
 ---
 
 ### `PUT /admin/books/{id}` — Modifier un livre
 
 > ✅ Nécessite `Authorization: Bearer <token>` avec le rôle **Admin**
-
-**URL :** `PUT /admin/books/1`
-
-**Body :**
-```json
-{
-  "bookName": "Le Petit Prince (édition corrigée)",
-  "bookAuthor": "Antoine de Saint-Exupéry",
-  "bookGenre": "Conte philosophique",
-  "noOfCopies": 5
-}
-```
-
-**Réponse 200 :**
-```json
-{
-  "bookId": 1,
-  "bookName": "Le Petit Prince (édition corrigée)",
-  "bookAuthor": "Antoine de Saint-Exupéry",
-  "bookGenre": "Conte philosophique",
-  "noOfCopies": 5
-}
-```
 
 ---
 
@@ -293,22 +198,13 @@
 
 > ✅ Nécessite `Authorization: Bearer <token>` avec le rôle **Admin**
 
-**URL :** `DELETE /admin/books/3`
-
-**Réponse 200 :**
-```json
-{
-  "deleted": true
-}
-```
-
 ---
 
 ## 📚 Gestion des Emprunts (BorrowController)
 
-### `POST /borrow` — Emprunter un livre
+> ⚠️ Endpoints actuellement publics (pas de token requis).
 
-> ❌ Pas de token requis
+### `POST /borrow` — Emprunter un livre
 
 **Body :**
 ```json
@@ -323,38 +219,15 @@
 Jean Dupont has borrowed one copy of "Le Petit Prince"!
 ```
 
-**Réponse 200 (échec - pas de stock) :**
-```
-The book "Le Petit Prince" is out of stock!
-```
-
-> 📝 Les dates `issueDate` et `dueDate` (7 jours plus tard) sont définies automatiquement par le serveur.
-
 ---
 
 ### `GET /borrow` — Lister tous les emprunts
 
 > ❌ Pas de token requis
 
-**Réponse 200 :**
-```json
-[
-  {
-    "borrowId": 1,
-    "bookId": 1,
-    "userId": 1,
-    "issueDate": "2026-08-21T10:00:00.000+0000",
-    "returnDate": null,
-    "dueDate": "2026-08-28T10:00:00.000+0000"
-  }
-]
-```
-
 ---
 
 ### `PUT /borrow` — Retourner un livre
-
-> ❌ Pas de token requis
 
 **Body :**
 ```json
@@ -365,79 +238,51 @@ The book "Le Petit Prince" is out of stock!
 }
 ```
 
-**Réponse 200 :**
-```json
-{
-  "borrowId": 1,
-  "bookId": 1,
-  "userId": 1,
-  "issueDate": "2026-08-21T10:00:00.000+0000",
-  "returnDate": "2026-08-22T14:30:00.000+0000",
-  "dueDate": "2026-08-28T10:00:00.000+0000"
-}
-```
-
-> 📝 La `returnDate` est définie automatiquement à la date courante.
-
 ---
 
 ### `GET /borrow/user/{id}` — Voir les emprunts d'un utilisateur
 
-> ❌ Pas de token requis
-
 **URL :** `GET /borrow/user/1`
-
-**Réponse 200 :**
-```json
-[
-  {
-    "borrowId": 1,
-    "bookId": 1,
-    "userId": 1,
-    "issueDate": "2026-08-21T10:00:00.000+0000",
-    "returnDate": null,
-    "dueDate": "2026-08-28T10:00:00.000+0000"
-  }
-]
-```
 
 ---
 
 ### `GET /borrow/book/{id}` — Voir l'historique d'emprunt d'un livre
 
-> ❌ Pas de token requis
-
 **URL :** `GET /borrow/book/1`
-
-**Réponse 200 :**
-```json
-[
-  {
-    "borrowId": 1,
-    "bookId": 1,
-    "userId": 1,
-    "issueDate": "2026-08-21T10:00:00.000+0000",
-    "returnDate": "2026-08-22T14:30:00.000+0000",
-    "dueDate": "2026-08-28T10:00:00.000+0000"
-  }
-]
-```
 
 ---
 
 ## 🗓️ Gestion des Réservations (ReservationController)
 
+> 🔒 **Tous les endpoints de réservation exigent un JWT valide.**
+>
+> - **401 Unauthorized** : token absent, invalide ou expiré (RS-01)
+> - **403 Forbidden** : authentifié mais sans droits (rôle ou propriété — RS-02, RS-03)
+
+| Endpoint | Anonyme | ADHERENT | BIBLIOTHECAIRE |
+|----------|---------|----------|----------------|
+| `POST /api/reservations` | 401 | ✅ pour lui-même uniquement | ✅ pour n'importe qui |
+| `GET /api/reservations` | 401 | ✅ ses réservations seulement | ✅ toutes |
+| `GET /api/reservations/{id}` | 401 | ✅ si elle lui appartient | ✅ toutes |
+| `PATCH /api/reservations/{id}/annuler` | 401 | ✅ si elle lui appartient | ✅ toutes |
+| `DELETE /api/reservations/{id}` | 401 | ❌ 403 | ✅ |
+| `GET /api/reservations/expired` | 401 | ✅ les siennes | ✅ toutes |
+
 ### `POST /api/reservations` — Créer une réservation
 
-> ❌ Pas de token requis
+> ✅ Nécessite `Authorization: Bearer <token>` (ADHERENT ou BIBLIOTHECAIRE)
+>
+> 🛡️ **RS-04 :** l'adhérent concerné est toujours l'utilisateur connecté (extrait du jeton JWT).
+> Tout `adherentId` envoyé dans le corps est **ignoré** par le serveur.
 
 **Body :**
 ```json
 {
-  "livreId": 1,
-  "adherentId": 1
+  "livreId": 1
 }
 ```
+
+*(Un `adherentId` peut encore être envoyé pour compatibilité, mais il est ignoré.)*
 
 **Réponse 201 :**
 ```json
@@ -448,24 +293,27 @@ The book "Le Petit Prince" is out of stock!
   "adherentId": 1,
   "adherentName": "Jean Dupont",
   "dateReservation": "2026-08-21T10:00:00.000+0000",
-  "dateExpiration": "2026-08-24T10:00:00.000+0000",
+  "dateExpiration": "2026-08-28T10:00:00.000+0000",
   "statut": "EN_ATTENTE"
 }
 ```
 
+**Erreurs :** `400` livreId manquant · `401` sans token · `404` livre introuvable · `409` RG-01/RG-02/RG-03
+
 ---
 
-### `GET /api/reservations` — Lister les réservations (filtrage optionnel)
+### `GET /api/reservations` — Lister les réservations
 
-> ❌ Pas de token requis
+> ✅ Nécessite `Authorization: Bearer <token>`
+
+- **ADHERENT** : retourne **uniquement ses propres réservations** (RS-05). Le filtre `adherentId` est ignoré et forcé à son identifiant.
+- **BIBLIOTHECAIRE** : voit toutes les réservations ; filtres optionnels `statut` et `adherentId`.
 
 **Sans filtre :** `GET /api/reservations`
 
 **Filtrer par statut :** `GET /api/reservations?statut=EN_ATTENTE`
 
-**Filtrer par membre :** `GET /api/reservations?adherentId=1`
-
-**Filtrer les deux :** `GET /api/reservations?statut=EN_ATTENTE&adherentId=1`
+**Filtrer par membre (BIBLIOTHECAIRE) :** `GET /api/reservations?adherentId=1`
 
 **Réponse 200 :**
 ```json
@@ -477,7 +325,7 @@ The book "Le Petit Prince" is out of stock!
     "adherentId": 1,
     "adherentName": "Jean Dupont",
     "dateReservation": "2026-08-21T10:00:00.000+0000",
-    "dateExpiration": "2026-08-24T10:00:00.000+0000",
+    "dateExpiration": "2026-08-28T10:00:00.000+0000",
     "statut": "EN_ATTENTE"
   }
 ]
@@ -487,51 +335,33 @@ The book "Le Petit Prince" is out of stock!
 
 ### `GET /api/reservations/{id}` — Obtenir une réservation par ID
 
-> ❌ Pas de token requis
+> ✅ Nécessite `Authorization: Bearer <token>`
+>
+> 🛡️ **RS-03 :** un ADHERENT qui consulte la réservation d'un autre reçoit **403**.
 
 **URL :** `GET /api/reservations/1`
 
-**Réponse 200 :**
-```json
-{
-  "reservationId": 1,
-  "livreId": 1,
-  "livreName": "Le Petit Prince",
-  "adherentId": 1,
-  "adherentName": "Jean Dupont",
-  "dateReservation": "2026-08-21T10:00:00.000+0000",
-  "dateExpiration": "2026-08-24T10:00:00.000+0000",
-  "statut": "EN_ATTENTE"
-}
-```
+**Erreurs :** `401` sans token · `403` réservation d'un autre adhérent · `404` introuvable
 
 ---
 
 ### `PATCH /api/reservations/{id}/annuler` — Annuler une réservation
 
-> ❌ Pas de token requis
+> ✅ Nécessite `Authorization: Bearer <token>`
+>
+> 🛡️ **RS-03 :** un ADHERENT ne peut annuler que ses propres réservations (**403** sinon).
 
 **URL :** `PATCH /api/reservations/1/annuler`
 
-**Réponse 200 :**
-```json
-{
-  "reservationId": 1,
-  "livreId": 1,
-  "livreName": "Le Petit Prince",
-  "adherentId": 1,
-  "adherentName": "Jean Dupont",
-  "dateReservation": "2026-08-21T10:00:00.000+0000",
-  "dateExpiration": "2026-08-24T10:00:00.000+0000",
-  "statut": "ANNULEE"
-}
-```
+**Erreurs :** `401` sans token · `403` réservation d'un autre · `404` introuvable · `409` RG-05
 
 ---
 
 ### `DELETE /api/reservations/{id}` — Supprimer une réservation
 
-> ❌ Pas de token requis
+> ✅ Nécessite `Authorization: Bearer <token>` avec le rôle **BIBLIOTHECAIRE**
+>
+> 🛡️ **RS-02 :** un ADHERENT reçoit **403**.
 
 **URL :** `DELETE /api/reservations/1`
 
@@ -541,23 +371,10 @@ The book "Le Petit Prince" is out of stock!
 
 ### `GET /api/reservations/expired` — Lister les réservations expirées
 
-> ❌ Pas de token requis
+> ✅ Nécessite `Authorization: Bearer <token>`
 
-**Réponse 200 :**
-```json
-[
-  {
-    "reservationId": 2,
-    "livreId": 2,
-    "livreName": "L'Étranger",
-    "adherentId": 2,
-    "adherentName": "Marie Martin",
-    "dateReservation": "2026-08-17T10:00:00.000+0000",
-    "dateExpiration": "2026-08-20T10:00:00.000+0000",
-    "statut": "EXPIREE"
-  }
-]
-```
+- **ADHERENT** : uniquement ses propres réservations expirées.
+- **BIBLIOTHECAIRE** : toutes.
 
 ---
 
@@ -577,20 +394,22 @@ The book "Le Petit Prince" is out of stock!
 
 | Valeur | Description |
 |---|---|
-| `Admin` | Administrateur (accès complet) |
-| `User` | Utilisateur standard |
+| `ADHERENT` | Membre : emprunts et réservations pour lui-même uniquement |
+| `BIBLIOTHECAIRE` | Bibliothécaire : gestion complète (livres, utilisateurs, réservations) |
+
+> Le seed (`data.sql`) attribue `BIBLIOTHECAIRE` au compte `admin` et `ADHERENT` au compte `user`.
 
 ---
 
 ## 🚀 Ordre de test recommandé
 
-1. **`POST /admin/users`** → Créer un admin
-2. **`POST /authenticate`** → Se connecter avec cet admin et récupérer le JWT
-3. **`POST /admin/books`** → Créer un livre (avec le token Admin)
-4. **`GET /admin/books`** → Vérifier le livre créé
-5. **`POST /borrow`** → Emprunter le livre
-6. **`GET /borrow`** → Vérifier l'emprunt
-7. **`PUT /borrow`** → Retourner le livre
-8. **`POST /api/reservations`** → Créer une réservation
-9. **`PATCH /api/reservations/1/annuler`** → Annuler la réservation
-10. **`GET /admin/users`** → Vérifier les users (Admin only)
+1. **`POST /authenticate`** → Se connecter avec `admin/admin123` (rôle BIBLIOTHECAIRE) et récupérer le JWT
+2. **`POST /authenticate`** → Se connecter avec `user/user123` (rôle ADHERENT) et récupérer le JWT
+3. **Sans token** : `GET /api/reservations` → **401** (RS-01)
+4. **Avec token ADHERENT** : `GET /api/reservations` → **200**, ses réservations seulement (RS-05)
+5. **Avec token ADHERENT** : `GET /api/reservations/{id d'un autre}` → **403** (RS-03)
+6. **Avec token ADHERENT** : `POST /api/reservations` avec `adherentId` d'un autre → créé pour l'utilisateur du token (RS-04)
+7. **Avec token ADHERENT** : `DELETE /api/reservations/{id}` → **403** (RS-02)
+8. **Avec token BIBLIOTHECAIRE** : `DELETE /api/reservations/{id}` → **204**
+9. **`POST /admin/books`** → Créer un livre (avec le token BIBLIOTHECAIRE)
+10. **`POST /borrow`** → Emprunter le livre

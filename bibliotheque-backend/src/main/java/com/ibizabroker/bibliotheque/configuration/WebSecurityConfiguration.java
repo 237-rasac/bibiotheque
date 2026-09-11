@@ -4,6 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
@@ -40,10 +41,18 @@ public class WebSecurityConfiguration extends WebSecurityConfigurerAdapter {
     protected void configure(HttpSecurity httpSecurity) throws Exception {
         httpSecurity.cors();
         httpSecurity.csrf().disable()
-                .authorizeRequests().antMatchers("/authenticate", "/borrow/**", "/admin/books/",
-                        "/api/reservations/**",
-                        "/swagger-ui.html", "/swagger-ui/**", "/api-docs/**", "/v3/api-docs/**").permitAll()
+                // Endpoints publics : authentification, Swagger et préflight CORS.
+                // Toute l'API de réservation (/api/reservations/**) est protégée : sans token -> 401 (RS-01).
+                .authorizeRequests().antMatchers("/authenticate", "/swagger-ui.html", "/swagger-ui/**",
+                        "/api-docs/**", "/v3/api-docs/**").permitAll()
+                .antMatchers(HttpMethod.OPTIONS).permitAll()
                 .antMatchers(HttpHeaders.ALLOW).permitAll()
+                // DELETE /api/reservations/{id} : bibliothécaire uniquement (RS-02)
+                .antMatchers(HttpMethod.DELETE, "/api/reservations/**").hasRole("BIBLIOTHECAIRE")
+                // Les autres méthodes de /api/reservations/** exigent un utilisateur authentifié :
+                // le filtrage ADHERENT/BIBLIOTHECAIRE est affiné par @PreAuthorize dans le contrôleur
+                // et par les règles de propriété dans le service (RS-03, RS-04, RS-05).
+                .antMatchers("/api/reservations/**").authenticated()
                 .anyRequest().authenticated()
                 .and()
                 .exceptionHandling().authenticationEntryPoint(jwtAuthenticationEntryPoint)

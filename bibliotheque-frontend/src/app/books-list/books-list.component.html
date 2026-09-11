@@ -1,8 +1,8 @@
 <div class="ds-flex ds-items-center ds-justify-between ds-mb-6 ds-animate-slideDown page-header">
   <h2 style="margin: 0;"><i class="fa-solid fa-book" style="color: var(--ds-primary); margin-right: 0.5rem;"></i> Book List</h2>
-  <a routerLink="/create-book" class="ds-btn ds-btn-success ds-btn-sm">
+  <button class="ds-btn ds-btn-success ds-btn-sm" (click)="openCreateModal()">
     <i class="fa-solid fa-plus"></i> Add Book
-  </a>
+  </button>
 </div>
 
 <!-- Skeleton loading -->
@@ -82,4 +82,51 @@
   <div class="ds-empty-state-icon"><i class="fa-solid fa-book"></i></div>
   <div class="ds-empty-state-title">No books found</div>
   <div class="ds-empty-state-text">The library catalog is empty. Add a book to get started.</div>
+</div>
+
+<!-- Create book modal -->
+<div class="modal-overlay" *ngIf="showCreateModal" (click)="closeCreateModal()">
+  <div class="modal-container modal-container--wide ds-animate-scaleIn" (click)="$event.stopPropagation()">
+    <div class="modal-header">
+      <div class="modal-icon modal-icon--success">
+        <i class="fa-solid fa-book-circle-plus"></i>
+      </div>
+      <h3>Add Book</h3>
+    </div>
+    <div class="modal-body">
+      <form (ngSubmit)="onCreateBook()" autocomplete="off">
+        <div class="ds-form-group">
+          <label class="ds-label">Book Name</label>
+          <input type="text" class="ds-input" [(ngModel)]="newBook.bookName" name="bookName" placeholder="Enter book title">
+        </div>
+        <div class="ds-form-group">
+          <label class="ds-label">Author</label>
+          <input type="text" class="ds-input" [(ngModel)]="newBook.bookAuthor" name="bookAuthor" placeholder="Enter author name">
+        </div>
+        <div class="ds-form-group">
+          <label class="ds-label">Genre</label>
+          <input type="text" class="ds-input" [(ngModel)]="newBook.bookGenre" name="bookGenre" placeholder="Enter genre">
+        </div>
+        <div class="ds-form-group">
+          <label class="ds-label">Number of Copies</label>
+          <input type="number" class="ds-input" [(ngModel)]="newBook.noOfCopies" name="noOfCopies" placeholder="0">
+        </div>
+      </form>
+    </div>
+    <div class="modal-footer">
+      <button
+        class="ds-btn ds-btn-ghost ds-btn-sm"
+        (click)="closeCreateModal()"
+        [disabled]="formSubmitting">
+        Cancel
+      </button>
+      <button
+        class="ds-btn ds-btn-success ds-btn-sm"
+        (click)="onCreateBook()"
+        [disabled]="formSubmitting">
+        <i class="fa-solid" [class.fa-spinner-third]="formSubmitting" [class.fa-plus]="!formSubmitting"></i>
+        {{ formSubmitting ? 'Creating...' : 'Create Book' }}
+      </button>
+    </div>
+  </div>
 </div>

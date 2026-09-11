@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
-import { Router } from '@angular/router';
+import { NavigationEnd, Router } from '@angular/router';
+import { filter } from 'rxjs/operators';
 import { Users } from '../_model/users';
 import { UsersService } from '../_service/users.service';
 
@@ -14,10 +15,15 @@ export class UsersListComponent implements OnInit {
   users: Users[] = [];
   loading = true;
 
+  showCreateModal = false;
+  formSubmitting = false;
+  newUser: Users = new Users();
+
   constructor(private usersService: UsersService,
     private router: Router) { }
 
   ngOnInit(): void {
+    this.router.routeReuseStrategy.shouldReuseRoute = () => false;
     this.getUsers();
     // this.users = [{
     //   "userId": 1,
@@ -42,6 +48,31 @@ export class UsersListComponent implements OnInit {
 
   updateUser(userId: number) {
     this.router.navigate(['update-user', userId ]);
+  }
+
+  openCreateModal() {
+    this.newUser = new Users();
+    this.showCreateModal = true;
+  }
+
+  closeCreateModal() {
+    if (!this.formSubmitting) {
+      this.showCreateModal = false;
+    }
+  }
+
+  onCreateUser() {
+    this.formSubmitting = true;
+    this.usersService.createUser(this.newUser).subscribe({
+      next: () => {
+        this.formSubmitting = false;
+        this.showCreateModal = false;
+        this.getUsers();
+      },
+      error: () => {
+        this.formSubmitting = false;
+      }
+    });
   }
 
 }

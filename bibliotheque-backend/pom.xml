@@ -65,6 +65,13 @@
             <scope>runtime</scope>
         </dependency>
 
+        <!-- Base H2 en memoire : permet aux tests d'integration de tourner sans PostgreSQL -->
+        <dependency>
+            <groupId>com.h2database</groupId>
+            <artifactId>h2</artifactId>
+            <scope>test</scope>
+        </dependency>
+
         <!-- SpringDoc OpenAPI for Swagger documentation -->
         <dependency>
             <groupId>org.springdoc</groupId>

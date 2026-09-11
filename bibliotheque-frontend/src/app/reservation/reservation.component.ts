@@ -1,10 +1,11 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
 import { Books } from '../_model/books';
 import { Reservation } from '../_model/reservation';
 import { Users } from '../_model/users';
 import { BooksService } from '../_service/books.service';
 import { ReservationService } from '../_service/reservation.service';
 import { UsersService } from '../_service/users.service';
+import { ReservationFormComponent } from '../reservation-form/reservation-form.component';
 
 @Component({
   selector: 'app-reservation',
@@ -24,6 +25,9 @@ export class ReservationComponent implements OnInit {
 
   formSubmitting = false;
   cancelling = false;
+  showCreateModal = false;
+
+  @ViewChild(ReservationFormComponent) reservationForm!: ReservationFormComponent;
 
   constructor(
     private reservationService: ReservationService,
@@ -75,11 +79,28 @@ export class ReservationComponent implements OnInit {
     this.loadReservations();
   }
 
+  openCreateModal() {
+    this.showCreateModal = true;
+  }
+
+  closeCreateModal() {
+    if (!this.formSubmitting) {
+      this.showCreateModal = false;
+      if (this.reservationForm) {
+        this.reservationForm.reset();
+      }
+    }
+  }
+
   onCreateReservation(event: { livreId: number; adherentId: number }) {
     this.formSubmitting = true;
     this.reservationService.createReservation(event.livreId, event.adherentId).subscribe({
       next: () => {
         this.formSubmitting = false;
+        this.showCreateModal = false;
+        if (this.reservationForm) {
+          this.reservationForm.reset();
+        }
         this.loadReservations();
       },
       error: () => {

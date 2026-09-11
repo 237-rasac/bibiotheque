@@ -13,6 +13,7 @@ export class ReservationFormComponent {
   @Input() books: Books[] = [];
   @Input() users: Users[] = [];
   @Input() submitting = false;
+  @Input() embedded = false;
   @Output() submitForm = new EventEmitter<{ livreId: number; adherentId: number }>();
 
   livreId: number | null = null;
@@ -29,5 +30,10 @@ export class ReservationFormComponent {
         adherentId: this.adherentId
       });
     }
+  }
+
+  reset() {
+    this.livreId = null;
+    this.adherentId = null;
   }
 }

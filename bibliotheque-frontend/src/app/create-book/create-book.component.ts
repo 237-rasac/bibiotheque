@@ -21,7 +21,8 @@ export class CreateBookComponent implements OnInit {
 
   saveBook() {
     this.booksService.createBook(this.book).subscribe({
-      next: () => { this.goToBooksList(); }
+      next: () => { this.goToBooksList(); },
+      error: () => { /* toast handled by interceptor */ }
     });
   }
 

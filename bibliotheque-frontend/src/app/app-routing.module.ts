@@ -18,25 +18,25 @@ import { ReservationComponent } from './reservation/reservation.component';
 import { ReservationDetailsComponent } from './reservation-details/reservation-details.component';
 
 const routes: Routes = [
-  {path: 'books', component: BooksListComponent, canActivate:[AuthGuard], data:{roles:['Admin']}},
-  {path: 'create-book', component: CreateBookComponent, canActivate:[AuthGuard], data:{roles:['Admin']}},
+  {path: 'books', component: BooksListComponent, canActivate:[AuthGuard], data:{roles:['BIBLIOTHECAIRE']}},
+  {path: 'create-book', component: CreateBookComponent, canActivate:[AuthGuard], data:{roles:['BIBLIOTHECAIRE']}},
   {path: '', component: HomeComponent},
-  {path: 'update-book/:bookId', component: UpdateBookComponent, canActivate:[AuthGuard], data:{roles:['Admin']}},
-  {path: 'book-details/:bookId', component: BookDetailsComponent, canActivate:[AuthGuard], data:{roles:['Admin']}},
-  {path: 'users', component: UsersListComponent, canActivate:[AuthGuard], data:{roles:['Admin']}},
-  {path: 'register-user', component: RegistrationComponent, canActivate:[AuthGuard], data:{roles:['Admin']}},
-  {path: 'user-details/:userId', component: UserDetailsComponent, canActivate:[AuthGuard], data:{roles:['Admin']}},
-  {path: 'update-user/:userId', component: UpdateUserComponent, canActivate:[AuthGuard], data:{roles:['Admin']}},
+  {path: 'update-book/:bookId', component: UpdateBookComponent, canActivate:[AuthGuard], data:{roles:['BIBLIOTHECAIRE']}},
+  {path: 'book-details/:bookId', component: BookDetailsComponent, canActivate:[AuthGuard], data:{roles:['BIBLIOTHECAIRE']}},
+  {path: 'users', component: UsersListComponent, canActivate:[AuthGuard], data:{roles:['BIBLIOTHECAIRE']}},
+  {path: 'register-user', component: RegistrationComponent, canActivate:[AuthGuard], data:{roles:['BIBLIOTHECAIRE']}},
+  {path: 'user-details/:userId', component: UserDetailsComponent, canActivate:[AuthGuard], data:{roles:['BIBLIOTHECAIRE']}},
+  {path: 'update-user/:userId', component: UpdateUserComponent, canActivate:[AuthGuard], data:{roles:['BIBLIOTHECAIRE']}},
   {path: 'login', component: LoginComponent},
   {path: 'forbidden', component: ForbiddenComponent},
-  {path: 'borrow-book', component: BorrowBookComponent, canActivate:[AuthGuard], data:{roles:['User']}},
-  {path: 'return-book', component: ReturnBookComponent, canActivate:[AuthGuard], data:{roles:['User']}},
-  {path: 'reservations', component: ReservationComponent, canActivate:[AuthGuard], data:{roles:['Admin']}},
-  {path: 'reservation-details/:reservationId', component: ReservationDetailsComponent, canActivate:[AuthGuard], data:{roles:['Admin']}}
+  {path: 'borrow-book', component: BorrowBookComponent, canActivate:[AuthGuard], data:{roles:['ADHERENT']}},
+  {path: 'return-book', component: ReturnBookComponent, canActivate:[AuthGuard], data:{roles:['ADHERENT']}},
+  {path: 'reservations', component: ReservationComponent, canActivate:[AuthGuard], data:{roles:['BIBLIOTHECAIRE']}},
+  {path: 'reservation-details/:reservationId', component: ReservationDetailsComponent, canActivate:[AuthGuard], data:{roles:['BIBLIOTHECAIRE']}}
 ];
 
 @NgModule({
-  imports: [RouterModule.forRoot(routes)],
+  imports: [RouterModule.forRoot(routes, { onSameUrlNavigation: 'reload' })],
   exports: [RouterModule]
 })
 export class AppRoutingModule { }

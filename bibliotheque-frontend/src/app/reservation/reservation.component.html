@@ -1,3 +1,12 @@
+<div class="ds-mb-4 ds-animate-fadeIn" style="display: flex; justify-content: space-between; align-items: center;">
+  <div></div>
+  <button
+    class="ds-btn ds-btn-primary ds-btn-sm"
+    (click)="openCreateModal()">
+    <i class="fa-solid fa-plus"></i> Add Reservation
+  </button>
+</div>
+
 <app-reservation-list
   [reservations]="reservations"
   [loading]="loading"
@@ -9,9 +18,38 @@
   (retry)="onRetry()">
 </app-reservation-list>
 
-<app-reservation-form
-  [books]="books"
-  [users]="users"
-  [submitting]="formSubmitting"
-  (submitForm)="onCreateReservation($event)">
-</app-reservation-form>
+<!-- Create reservation modal -->
+<div class="modal-overlay" *ngIf="showCreateModal" (click)="closeCreateModal()">
+  <div class="modal-container modal-container--wide ds-animate-scaleIn" (click)="$event.stopPropagation()">
+    <div class="modal-header">
+      <div class="modal-icon modal-icon--success">
+        <i class="fa-solid fa-plus-circle"></i>
+      </div>
+      <h3>Create Reservation</h3>
+    </div>
+    <div class="modal-body">
+      <app-reservation-form
+        [books]="books"
+        [users]="users"
+        [submitting]="formSubmitting"
+        [embedded]="true"
+        (submitForm)="onCreateReservation($event)">
+      </app-reservation-form>
+    </div>
+    <div class="modal-footer">
+      <button
+        class="ds-btn ds-btn-ghost ds-btn-sm"
+        (click)="closeCreateModal()"
+        [disabled]="formSubmitting">
+        Cancel
+      </button>
+      <button
+        class="ds-btn ds-btn-primary ds-btn-sm"
+        (click)="reservationForm.onSubmit()"
+        [disabled]="!(reservationForm && reservationForm.isFormValid) || formSubmitting">
+        <i class="fa-solid" [class.fa-spinner-third]="formSubmitting" [class.fa-plus]="!formSubmitting"></i>
+        {{ formSubmitting ? 'Creating...' : 'Create Reservation' }}
+      </button>
+    </div>
+  </div>
+</div>

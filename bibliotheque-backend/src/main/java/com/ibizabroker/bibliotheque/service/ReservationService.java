@@ -5,9 +5,15 @@ import com.ibizabroker.bibliotheque.dao.ReservationRepository;
 import com.ibizabroker.bibliotheque.dao.UsersRepository;
 import com.ibizabroker.bibliotheque.entity.*;
 import com.ibizabroker.bibliotheque.exceptions.ConflictException;
+import com.ibizabroker.bibliotheque.exceptions.ForbiddenException;
 import com.ibizabroker.bibliotheque.exceptions.NotFoundException;
+import com.ibizabroker.bibliotheque.exceptions.UnauthorizedException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -37,8 +43,71 @@ public class ReservationService {
     @Autowired
     private UsersRepository usersRepository;
 
+    // =====================================================
+    // Sécurité : identité et rôle extraits du contexte Spring
+    // (jamais du corps de la requête - RS-04)
+    // =====================================================
+
+    /**
+     * RS-04 : l'identité de l'appelant provient exclusivement du
+     * SecurityContextHolder (rempli par JwtRequestFilter à partir du token JWT).
+     * Le client ne peut jamais se faire passer pour un autre adhérent.
+     */
+    private Integer getCurrentUserId() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        if (authentication == null || !authentication.isAuthenticated()) {
+            throw new UnauthorizedException("Authentification requise : jeton absent ou invalide.");
+        }
+        Object principal = authentication.getPrincipal();
+        String username = null;
+        if (principal instanceof UserDetails) {
+            // Cas de la production : JwtRequestFilter pose un principal UserDetails
+            username = ((UserDetails) principal).getUsername();
+        } else if (principal instanceof String) {
+            username = (String) principal;
+        }
+        if (username == null || "anonymousUser".equals(username)) {
+            throw new UnauthorizedException("Authentification requise : jeton absent ou invalide.");
+        }
+        final String tokenUsername = username;
+        Users user = usersRepository.findByUsername(tokenUsername)
+                .orElseThrow(() -> new UnauthorizedException(
+                        "Utilisateur introuvable pour le jeton fourni : " + tokenUsername));
+        return user.getUserId();
+    }
+
+    /**
+     * RS-02 : un ADHERENT n'a pas les droits du BIBLIOTHECAIRE.
+     * Le rôle est lu depuis les authorities du token (ROLE_BIBLIOTHECAIRE).
+     */
+    private boolean isBibliothecaire() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        if (authentication == null) {
+            return false;
+        }
+        for (GrantedAuthority authority : authentication.getAuthorities()) {
+            if ("ROLE_BIBLIOTHECAIRE".equals(authority.getAuthority())) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
+     * RS-03 : un ADHERENT ne peut accéder qu'à ses propres réservations.
+     */
+    private void checkOwnership(Reservation reservation, Integer currentUserId) {
+        if (!isBibliothecaire() && !reservation.getAdherent().getUserId().equals(currentUserId)) {
+            throw new ForbiddenException(
+                    "Accès interdit : cette réservation n'appartient pas à l'utilisateur connecté.");
+        }
+    }
+
     /**
      * POST /api/reservations - Create a new reservation
+     * Security rules enforced:
+     * - RS-04 (critical): the reserved identity comes from the JWT token
+     *   (SecurityContextHolder), NEVER from request.getAdherentId().
      * Business rules enforced:
      * - RG-01: Book must be currently unavailable (noOfCopies < 1)
      * - RG-02: Member cannot have more than one active reservation for the same book
@@ -47,9 +116,12 @@ public class ReservationService {
      */
     @Transactional
     public ReservationResponse createReservation(ReservationRequest request) {
+        // Identity from the security context, not from the request body (RS-04)
+        Integer currentUserId = getCurrentUserId();
+
         // Validate required fields (400)
-        if (request.getLivreId() == null || request.getAdherentId() == null) {
-            throw new IllegalArgumentException("livreId and adherentId are required");
+        if (request.getLivreId() == null) {
+            throw new IllegalArgumentException("livreId is required");
         }
 
         // Find book (404 if not found)
@@ -57,10 +129,10 @@ public class ReservationService {
                 .orElseThrow(() -> new NotFoundException(
                         "Livre with id " + request.getLivreId() + " does not exist."));
 
-        // Find member (404 if not found)
-        Users adherent = usersRepository.findById(request.getAdherentId())
-                .orElseThrow(() -> new NotFoundException(
-                        "Utilisateur with id " + request.getAdherentId() + " does not exist."));
+        // The reservation is always created for the authenticated user (RS-04)
+        Users adherent = usersRepository.findById(currentUserId)
+                .orElseThrow(() -> new UnauthorizedException(
+                        "Utilisateur with id " + currentUserId + " does not exist."));
 
         // RG-01: Book must be currently unavailable (noOfCopies < 1)
         if (book.getNoOfCopies() >= 1) {
@@ -73,7 +145,7 @@ public class ReservationService {
         // RG-02: Member cannot have more than one active reservation for the same book
         List<Reservation> existingForBook = reservationRepository
                 .findByAdherentUserIdAndLivreBookIdAndStatutIn(
-                        request.getAdherentId(), request.getLivreId(), ACTIVE_STATUTS);
+                        currentUserId, request.getLivreId(), ACTIVE_STATUTS);
         if (!existingForBook.isEmpty()) {
             throw new ConflictException(
                     "Vous avez déjà une réservation active pour le livre \"" + book.getBookName() + "\".",
@@ -82,7 +154,7 @@ public class ReservationService {
 
         // RG-03: Member cannot have more than 3 active reservations simultaneously
         long activeCount = reservationRepository.countByAdherentUserIdAndStatutIn(
-                request.getAdherentId(), ACTIVE_STATUTS);
+                currentUserId, ACTIVE_STATUTS);
         if (activeCount >= 3) {
             throw new ConflictException(
                     "Vous avez déjà 3 réservations actives. La limite maximale est atteinte.",
@@ -107,21 +179,37 @@ public class ReservationService {
     }
 
     /**
-     * GET /api/reservations - List reservations with optional filtering by status and member
+     * GET /api/reservations - List reservations with optional status filter.
+     * Security rules enforced:
+     * - RS-05: an ADHERENT only ever sees his own reservations, whatever
+     *   adherentId filter he tries to pass.
+     * - BIBLIOTHECAIRE: sees all reservations (optionally filtered by member).
      */
     public List<ReservationResponse> listReservations(ReservationStatut statut, Integer adherentId) {
-        List<Reservation> reservations;
-
-        if (statut != null && adherentId != null) {
-            reservations = reservationRepository.findByAdherentUserIdAndStatut(adherentId, statut);
-        } else if (statut != null) {
-            reservations = reservationRepository.findByStatut(statut);
-        } else if (adherentId != null) {
-            reservations = reservationRepository.findByAdherentUserId(adherentId);
-        } else {
-            reservations = reservationRepository.findAll();
+        if (isBibliothecaire()) {
+            List<Reservation> reservations;
+            if (statut != null && adherentId != null) {
+                reservations = reservationRepository.findByAdherentUserIdAndStatut(adherentId, statut);
+            } else if (statut != null) {
+                reservations = reservationRepository.findByStatut(statut);
+            } else if (adherentId != null) {
+                reservations = reservationRepository.findByAdherentUserId(adherentId);
+            } else {
+                reservations = reservationRepository.findAll();
+            }
+            return reservations.stream()
+                    .map(this::toResponse)
+                    .collect(Collectors.toList());
         }
 
+        // RS-05: an ADHERENT is always scoped to his own reservations (RS-03)
+        Integer currentUserId = getCurrentUserId();
+        List<Reservation> reservations;
+        if (statut != null) {
+            reservations = reservationRepository.findByAdherentUserIdAndStatut(currentUserId, statut);
+        } else {
+            reservations = reservationRepository.findByAdherentUserId(currentUserId);
+        }
         return reservations.stream()
                 .map(this::toResponse)
                 .collect(Collectors.toList());
@@ -129,24 +217,34 @@ public class ReservationService {
 
     /**
      * GET /api/reservations/{id} - Get details of a specific reservation
+     * Security rule enforced:
+     * - RS-03: an ADHERENT can only read his own reservation (403 otherwise).
      */
     public ReservationResponse getReservationById(Integer id) {
+        Integer currentUserId = getCurrentUserId();
         Reservation reservation = reservationRepository.findById(id)
                 .orElseThrow(() -> new NotFoundException(
                         "Réservation avec id " + id + " n'existe pas."));
+        checkOwnership(reservation, currentUserId);
         return toResponse(reservation);
     }
 
     /**
      * PATCH /api/reservations/{id}/annuler - Cancel a reservation
+     * Security rules enforced:
+     * - RS-03: an ADHERENT can only cancel his own reservation (403 otherwise).
+     * Business rules:
      * - RG-05: Can only cancel if status is EN_ATTENTE or DISPONIBLE
      * - RG-06: ANNULEE, EXPIREE, HONOREE cannot change status
      */
     @Transactional
     public ReservationResponse cancelReservation(Integer id) {
+        Integer currentUserId = getCurrentUserId();
         Reservation reservation = reservationRepository.findById(id)
                 .orElseThrow(() -> new NotFoundException(
                         "Réservation avec id " + id + " n'existe pas."));
+
+        checkOwnership(reservation, currentUserId);
 
         // RG-05 & RG-06: Only EN_ATTENTE or DISPONIBLE can be cancelled
         if (reservation.getStatut() != ReservationStatut.EN_ATTENTE
@@ -163,7 +261,9 @@ public class ReservationService {
     }
 
     /**
-     * DELETE /api/reservations/{id} - Delete a reservation
+     * DELETE /api/reservations/{id} - Delete a reservation.
+     * Security rule enforced:
+     * - RS-02: BIBLIOTHECAIRE only (URL rule + @PreAuthorize in the controller).
      */
     @Transactional
     public void deleteReservation(Integer id) {
@@ -174,11 +274,19 @@ public class ReservationService {
     }
 
     /**
-     * GET /api/reservations/expired - List expired reservations
+     * GET /api/reservations/expired - List expired reservations.
+     * RS-05: an ADHERENT only sees his own expired reservations,
+     * a BIBLIOTHECAIRE sees all of them.
      */
     public List<ReservationResponse> listExpiredReservations() {
         List<Reservation> expired = reservationRepository
                 .findByStatutAndDateExpirationBefore(ReservationStatut.EN_ATTENTE, new Date());
+        if (!isBibliothecaire()) {
+            Integer currentUserId = getCurrentUserId();
+            expired = expired.stream()
+                    .filter(r -> r.getAdherent().getUserId().equals(currentUserId))
+                    .collect(Collectors.toList());
+        }
         return expired.stream()
                 .map(this::toResponse)
                 .collect(Collectors.toList());

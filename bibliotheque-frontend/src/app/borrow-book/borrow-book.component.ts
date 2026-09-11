@@ -42,7 +42,8 @@ export class BorrowBookComponent implements OnInit {
     this.borrow.bookId = bookId;
     this.borrow.userId = this.userId;
     this.borrowService.borrowBook(this.borrow).subscribe({
-      next: () => { this.getBooks(); }
+      next: () => { this.getBooks(); },
+      error: () => { /* toast handled by interceptor */ }
     });
   }
 }

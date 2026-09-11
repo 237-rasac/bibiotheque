@@ -30,9 +30,9 @@ export class BookDetailsComponent implements OnInit {
     this.id = this.route.snapshot.params['bookId'];
     // console.log(this.id);
     this.book = new Books();
-    this.bookService.getBookById(this.id).subscribe( data => {
-      this.book = data;
-      console.log(data);
+    this.bookService.getBookById(this.id).subscribe({
+      next: (data) => { this.book = data; },
+      error: () => { /* toast handled by interceptor */ }
     })
 
     this.getBorrowHistory(this.id);
@@ -40,16 +40,17 @@ export class BookDetailsComponent implements OnInit {
   }
 
   private getBorrowHistory(bookId: number) {
-    this.borrowService.getBookBorrowHistory(bookId).subscribe(data => {
-      this.borrow = data;
-      console.log(data);
+    this.borrowService.getBookBorrowHistory(bookId).subscribe({
+      next: (data) => { this.borrow = data; },
+      error: () => { /* toast handled by interceptor */ }
     });
   }
 
   public getUserData(userId: number):string {
     this.user = new Users();
-    this.userService.getUserById(userId).subscribe( data => {
-      this.user = data;
+    this.userService.getUserById(userId).subscribe({
+      next: (data) => { this.user = data; },
+      error: () => { /* toast handled by interceptor */ }
     })
     return this.user.name;
   }

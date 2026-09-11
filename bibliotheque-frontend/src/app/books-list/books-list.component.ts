@@ -14,6 +14,10 @@ export class BooksListComponent implements OnInit {
   books: Books[] = [];
   loading = true;
 
+  showCreateModal = false;
+  formSubmitting = false;
+  newBook: Books = new Books();
+
   constructor(private booksService: BooksService,
     private router: Router) { }
 
@@ -34,13 +38,39 @@ export class BooksListComponent implements OnInit {
   }
 
   deleteBook(bookId: number) {
-    this.booksService.deleteBook(bookId).subscribe( data=> {
-      this.getBooks();
+    this.booksService.deleteBook(bookId).subscribe({
+      next: () => { this.getBooks(); },
+      error: () => { /* toast handled by interceptor */ }
     });
   }
 
   bookDetails(bookId: number) {
     this.router.navigate(['book-details', bookId ]);
+  }
+
+  openCreateModal() {
+    this.newBook = new Books();
+    this.showCreateModal = true;
+  }
+
+  closeCreateModal() {
+    if (!this.formSubmitting) {
+      this.showCreateModal = false;
+    }
+  }
+
+  onCreateBook() {
+    this.formSubmitting = true;
+    this.booksService.createBook(this.newBook).subscribe({
+      next: () => {
+        this.formSubmitting = false;
+        this.showCreateModal = false;
+        this.getBooks();
+      },
+      error: () => {
+        this.formSubmitting = false;
+      }
+    });
   }
 
 }

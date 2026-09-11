@@ -20,12 +20,15 @@ export class UpdateUserComponent implements OnInit {
 
   ngOnInit(): void {
     this.userId = this.route.snapshot.params['userId'];
-    this.usersService.getUserById(this.userId).subscribe();
+    this.usersService.getUserById(this.userId).subscribe({
+      error: () => { /* toast handled by interceptor */ }
+    });
   }
 
   onSubmit() {
     this.usersService.updateUser(this.userId, this.user).subscribe({
-      next: () => { this.goToUsersList(); }
+      next: () => { this.goToUsersList(); },
+      error: () => { /* toast handled by interceptor */ }
     });
   }
 

@@ -21,12 +21,15 @@ export class UpdateBookComponent implements OnInit {
 
   ngOnInit(): void {
     this.bookId = this.route.snapshot.params['bookId'];
-    this.booksService.getBookById(this.bookId).subscribe();
+    this.booksService.getBookById(this.bookId).subscribe({
+      error: () => { /* toast handled by interceptor */ }
+    });
   }
 
   onSubmit() {
     this.booksService.updateBook(this.bookId, this.book).subscribe({
-      next: () => { this.goToBooksList(); }
+      next: () => { this.goToBooksList(); },
+      error: () => { /* toast handled by interceptor */ }
     });
   }
 

@@ -31,21 +31,21 @@
   <nav class="ds-sidebar-nav">
     <ul class="ds-sidebar-links">
       <!-- Admin links -->
-      <li *ngIf="userService.roleMatch(['Admin'])">
+      <li *ngIf="userService.roleMatch(['BIBLIOTHECAIRE'])">
         <a routerLink="/books" routerLinkActive="active" class="ds-sidebar-link" [title]="collapsed ? 'Books' : ''">
           <i class="fa-solid fa-book"></i>
           <span class="ds-sidebar-label">Books</span>
         </a>
       </li>
 
-      <li *ngIf="userService.roleMatch(['Admin'])">
+      <li *ngIf="userService.roleMatch(['BIBLIOTHECAIRE'])">
         <a routerLink="/users" routerLinkActive="active" class="ds-sidebar-link" [title]="collapsed ? 'Users' : ''">
           <i class="fa-solid fa-users"></i>
           <span class="ds-sidebar-label">Users</span>
         </a>
       </li>
 
-      <li *ngIf="userService.roleMatch(['Admin'])">
+      <li *ngIf="userService.roleMatch(['BIBLIOTHECAIRE'])">
         <a routerLink="/reservations" routerLinkActive="active" class="ds-sidebar-link" [title]="collapsed ? 'Reservations' : ''">
           <i class="fa-solid fa-calendar-check"></i>
           <span class="ds-sidebar-label">Reservations</span>
@@ -53,13 +53,13 @@
       </li>
 
       <!-- User links -->
-      <li *ngIf="userService.roleMatch(['User'])">
+      <li *ngIf="userService.roleMatch(['ADHERENT'])">
         <a routerLink="/borrow-book" routerLinkActive="active" class="ds-sidebar-link" [title]="collapsed ? 'Borrow' : ''">
           <i class="fa-solid fa-book-reader"></i>
           <span class="ds-sidebar-label">Borrow</span>
         </a>
       </li>
-      <li *ngIf="userService.roleMatch(['User'])">
+      <li *ngIf="userService.roleMatch(['ADHERENT'])">
         <a routerLink="/return-book" routerLinkActive="active" class="ds-sidebar-link" [title]="collapsed ? 'Return' : ''">
           <i class="fa-solid fa-rotate-left"></i>
           <span class="ds-sidebar-label">Return</span>

@@ -1,8 +1,8 @@
 <div class="ds-flex ds-items-center ds-justify-between ds-mb-6 ds-animate-slideDown page-header">
   <h2 style="margin: 0;"><i class="fa-solid fa-users" style="color: var(--ds-secondary); margin-right: 0.5rem;"></i> User List</h2>
-  <a routerLink="/register-user" class="ds-btn ds-btn-success ds-btn-sm">
+  <button class="ds-btn ds-btn-success ds-btn-sm" (click)="openCreateModal()">
     <i class="fa-solid fa-user-plus"></i> Add User
-  </a>
+  </button>
 </div>
 
 <!-- Skeleton loading -->
@@ -52,14 +52,14 @@
         <td data-label="Name"><strong>{{ user.name }}</strong></td>
         <td data-label="Username">{{ user.username }}</td>
         <td data-label="Role">
-          <span class="ds-badge" [class.ds-badge-primary]="user.role[0].roleName === 'Admin'" [class.ds-badge-info]="user.role[0].roleName === 'User'">
-            <i class="fa-solid" [class.fa-shield-halved]="user.role[0].roleName === 'Admin'" [class.fa-user]="user.role[0].roleName === 'User'"></i>
+          <span class="ds-badge" [class.ds-badge-primary]="user.role[0].roleName === 'BIBLIOTHECAIRE'" [class.ds-badge-info]="user.role[0].roleName === 'ADHERENT'">
+            <i class="fa-solid" [class.fa-shield-halved]="user.role[0].roleName === 'BIBLIOTHECAIRE'" [class.fa-user]="user.role[0].roleName === 'ADHERENT'"></i>
             {{ user.role[0].roleName }}
           </span>
         </td>
         <td data-label="Actions">
           <div class="ds-table-actions">
-            <div *ngIf="user.role[0].roleName === 'User'">
+            <div *ngIf="user.role[0].roleName === 'ADHERENT'">
               <button (click)="userDetails(user.userId)" class="ds-btn ds-btn-outline-primary ds-btn-sm">
                 <i class="fa-solid fa-eye"></i> View
               </button>
@@ -79,4 +79,54 @@
   <div class="ds-empty-state-icon"><i class="fa-solid fa-users"></i></div>
   <div class="ds-empty-state-title">No users found</div>
   <div class="ds-empty-state-text">No users have been registered yet.</div>
+</div>
+
+<!-- Create user modal -->
+<div class="modal-overlay" *ngIf="showCreateModal" (click)="closeCreateModal()">
+  <div class="modal-container modal-container--wide ds-animate-scaleIn" (click)="$event.stopPropagation()">
+    <div class="modal-header">
+      <div class="modal-icon modal-icon--primary">
+        <i class="fa-solid fa-user-plus"></i>
+      </div>
+      <h3>Add User</h3>
+    </div>
+    <div class="modal-body">
+      <form (ngSubmit)="onCreateUser()" autocomplete="off">
+        <div class="ds-form-group">
+          <label class="ds-label">Name</label>
+          <input type="text" class="ds-input" [(ngModel)]="newUser.name" name="name" placeholder="Enter full name">
+        </div>
+        <div class="ds-form-group">
+          <label class="ds-label">Username</label>
+          <input type="text" class="ds-input" [(ngModel)]="newUser.username" name="username" placeholder="Enter username">
+        </div>
+        <div class="ds-form-group">
+          <label class="ds-label">Password</label>
+          <input type="password" class="ds-input" [(ngModel)]="newUser.password" name="password" placeholder="Enter password">
+        </div>
+        <div class="ds-form-group">
+          <label class="ds-label">Role</label>
+          <select class="ds-select" [(ngModel)]="newUser.role[0].roleName" name="role">
+            <option value="ADHERENT">Adhérent</option>
+            <option value="BIBLIOTHECAIRE">Bibliothécaire</option>
+          </select>
+        </div>
+      </form>
+    </div>
+    <div class="modal-footer">
+      <button
+        class="ds-btn ds-btn-ghost ds-btn-sm"
+        (click)="closeCreateModal()"
+        [disabled]="formSubmitting">
+        Cancel
+      </button>
+      <button
+        class="ds-btn ds-btn-success ds-btn-sm"
+        (click)="onCreateUser()"
+        [disabled]="formSubmitting">
+        <i class="fa-solid" [class.fa-spinner-third]="formSubmitting" [class.fa-plus]="!formSubmitting"></i>
+        {{ formSubmitting ? 'Creating...' : 'Create User' }}
+      </button>
+    </div>
+  </div>
 </div>

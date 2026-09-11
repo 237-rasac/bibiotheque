@@ -21,7 +21,8 @@ export class RegistrationComponent implements OnInit {
 
   saveUser() {
     this.usersService.createUser(this.user).subscribe({
-      next: () => { this.goToUsersList(); }
+      next: () => { this.goToUsersList(); },
+      error: () => { /* toast handled by interceptor */ }
     });
   }
 

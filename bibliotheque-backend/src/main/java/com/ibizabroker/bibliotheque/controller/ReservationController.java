@@ -15,6 +15,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -29,13 +30,20 @@ public class ReservationController {
     private ReservationService reservationService;
 
     @PostMapping
+    @PreAuthorize("hasAnyRole('ADHERENT', 'BIBLIOTHECAIRE')")
     @Operation(summary = "Créer une réservation",
             description = "Crée une nouvelle réservation pour un livre indisponible. " +
-                    "Le serveur définit automatiquement les dates et le statut.")
+                    "Le serveur définit automatiquement les dates et le statut. " +
+                    "L'adhérent concerné est toujours l'utilisateur connecté (dédut du jeton JWT, RS-04) : " +
+                    "tout adherentId envoyé dans le corps est ignoré.")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "201", description = "Réservation créée avec succès",
                     content = @Content(schema = @Schema(implementation = ReservationResponse.class))),
-            @ApiResponse(responseCode = "400", description = "livreId ou adherentId manquant",
+            @ApiResponse(responseCode = "400", description = "livreId manquant",
+                    content = @Content),
+            @ApiResponse(responseCode = "401", description = "Token absent ou invalide",
+                    content = @Content),
+            @ApiResponse(responseCode = "403", description = "Accès refusé (rôle ou propriété de la réservation)",
                     content = @Content),
             @ApiResponse(responseCode = "404", description = "Livre ou utilisateur introuvable",
                     content = @Content),
@@ -49,6 +57,7 @@ public class ReservationController {
     }
 
     @GetMapping
+    @PreAuthorize("hasAnyRole('ADHERENT', 'BIBLIOTHECAIRE')")
     @Operation(summary = "Lister les réservations",
             description = "Liste toutes les réservations avec filtrage optionnel par statut et/ou membre.")
     @ApiResponses(value = {
@@ -65,6 +74,7 @@ public class ReservationController {
     }
 
     @GetMapping("/{id}")
+    @PreAuthorize("hasAnyRole('ADHERENT', 'BIBLIOTHECAIRE')")
     @Operation(summary = "Obtenir une réservation par ID",
             description = "Retourne les détails d'une réservation spécifique.")
     @ApiResponses(value = {
@@ -81,6 +91,7 @@ public class ReservationController {
     }
 
     @PatchMapping("/{id}/annuler")
+    @PreAuthorize("hasAnyRole('ADHERENT', 'BIBLIOTHECAIRE')")
     @Operation(summary = "Annuler une réservation",
             description = "Annule une réservation. Seules les réservations EN_ATTENTE ou DISPONIBLE peuvent être annulées.")
     @ApiResponses(value = {
@@ -99,6 +110,7 @@ public class ReservationController {
     }
 
     @DeleteMapping("/{id}")
+    @PreAuthorize("hasRole('BIBLIOTHECAIRE')")
     @Operation(summary = "Supprimer une réservation",
             description = "Supprime définitivement une réservation.")
     @ApiResponses(value = {
@@ -114,6 +126,7 @@ public class ReservationController {
     }
 
     @GetMapping("/expired")
+    @PreAuthorize("hasAnyRole('ADHERENT', 'BIBLIOTHECAIRE')")
     @Operation(summary = "Lister les réservations expirées",
             description = "Retourne toutes les réservations dont la date d'expiration est dépassée " +
                     "et dont le statut est toujours EN_ATTENTE.")
