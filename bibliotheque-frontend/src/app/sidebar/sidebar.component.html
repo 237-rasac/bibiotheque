@@ -60,6 +60,12 @@
         </a>
       </li>
       <li *ngIf="userService.roleMatch(['ADHERENT'])">
+        <a routerLink="/my-reservations" routerLinkActive="active" class="ds-sidebar-link" [title]="collapsed ? 'Mes réservations' : ''">
+          <i class="fa-solid fa-calendar-check"></i>
+          <span class="ds-sidebar-label">Mes réservations</span>
+        </a>
+      </li>
+      <li *ngIf="userService.roleMatch(['ADHERENT'])">
         <a routerLink="/return-book" routerLinkActive="active" class="ds-sidebar-link" [title]="collapsed ? 'Return' : ''">
           <i class="fa-solid fa-rotate-left"></i>
           <span class="ds-sidebar-label">Return</span>

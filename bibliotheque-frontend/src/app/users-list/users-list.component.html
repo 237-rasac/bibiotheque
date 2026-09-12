@@ -52,20 +52,23 @@
         <td data-label="Name"><strong>{{ user.name }}</strong></td>
         <td data-label="Username">{{ user.username }}</td>
         <td data-label="Role">
-          <span class="ds-badge" [class.ds-badge-primary]="user.role[0].roleName === 'BIBLIOTHECAIRE'" [class.ds-badge-info]="user.role[0].roleName === 'ADHERENT'">
-            <i class="fa-solid" [class.fa-shield-halved]="user.role[0].roleName === 'BIBLIOTHECAIRE'" [class.fa-user]="user.role[0].roleName === 'ADHERENT'"></i>
-            {{ user.role[0].roleName }}
+          <span class="ds-badge" [class.ds-badge-primary]="user.role[0]?.roleName === 'BIBLIOTHECAIRE'" [class.ds-badge-info]="user.role[0]?.roleName === 'ADHERENT'">
+            <i class="fa-solid" [class.fa-shield-halved]="user.role[0]?.roleName === 'BIBLIOTHECAIRE'" [class.fa-user]="user.role[0]?.roleName === 'ADHERENT'"></i>
+            {{ user.role[0]?.roleName || 'NO ROLE' }}
           </span>
         </td>
         <td data-label="Actions">
           <div class="ds-table-actions">
-            <div *ngIf="user.role[0].roleName === 'ADHERENT'">
+            <div *ngIf="user.role[0]?.roleName === 'ADHERENT'">
               <button (click)="userDetails(user.userId)" class="ds-btn ds-btn-outline-primary ds-btn-sm">
                 <i class="fa-solid fa-eye"></i> View
               </button>
             </div>
             <button (click)="updateUser(user.userId)" class="ds-btn ds-btn-outline-secondary ds-btn-sm">
               <i class="fa-solid fa-pen"></i> Edit
+            </button>
+            <button (click)="deleteUser(user.userId)" class="ds-btn ds-btn-outline-danger ds-btn-sm">
+              <i class="fa-solid fa-trash"></i> Delete
             </button>
           </div>
         </td>
@@ -91,26 +94,51 @@
       <h3>Add User</h3>
     </div>
     <div class="modal-body">
-      <form (ngSubmit)="onCreateUser()" autocomplete="off">
+      <!-- Le rôle est attribué par le backend (ADHERENT) : aucun champ rôle ici. -->
+      <form #createForm="ngForm" (ngSubmit)="onCreateUser(createForm)" autocomplete="off">
         <div class="ds-form-group">
           <label class="ds-label">Name</label>
-          <input type="text" class="ds-input" [(ngModel)]="newUser.name" name="name" placeholder="Enter full name">
+          <input type="text" class="ds-input" [class.ds-input-invalid]="name.invalid && (name.touched || createForm.submitted)"
+                 [(ngModel)]="newUser.name" name="name" #name="ngModel"
+                 required minlength="2" maxlength="50" placeholder="Enter full name">
+          <small class="ds-field-error" *ngIf="name.invalid && (name.touched || createForm.submitted)">
+            <span *ngIf="name.errors?.['required']">Name is required.</span>
+            <span *ngIf="name.errors?.['minlength']">Name must be at least 2 characters.</span>
+          </small>
         </div>
         <div class="ds-form-group">
           <label class="ds-label">Username</label>
-          <input type="text" class="ds-input" [(ngModel)]="newUser.username" name="username" placeholder="Enter username">
+          <input type="text" class="ds-input" [class.ds-input-invalid]="username.invalid && (username.touched || createForm.submitted)"
+                 [(ngModel)]="newUser.username" name="username" #username="ngModel"
+                 required minlength="3" maxlength="30" pattern="[a-zA-Z0-9._-]+" placeholder="Enter username">
+          <small class="ds-field-error" *ngIf="username.invalid && (username.touched || createForm.submitted)">
+            <span *ngIf="username.errors?.['required']">Username is required.</span>
+            <span *ngIf="username.errors?.['minlength']">Username must be at least 3 characters.</span>
+            <span *ngIf="username.errors?.['pattern']">Only letters, digits, dots, dashes and underscores.</span>
+          </small>
         </div>
         <div class="ds-form-group">
           <label class="ds-label">Password</label>
-          <input type="password" class="ds-input" [(ngModel)]="newUser.password" name="password" placeholder="Enter password">
+          <div class="password-field">
+            <input [type]="showPassword ? 'text' : 'password'" class="ds-input" [class.ds-input-invalid]="password.invalid && (password.touched || createForm.submitted)"
+                   [(ngModel)]="newUser.password" name="password" #password="ngModel"
+                   required minlength="6" placeholder="Enter password" autocomplete="new-password">
+            <button type="button" class="password-toggle" (click)="showPassword = !showPassword"
+                    [attr.aria-label]="showPassword ? 'Masquer le mot de passe' : 'Afficher le mot de passe'"
+                    [attr.aria-pressed]="showPassword">
+              <i class="fa-solid" [class.fa-eye]="!showPassword" [class.fa-eye-slash]="showPassword"></i>
+            </button>
+          </div>
+          <small class="ds-field-error" *ngIf="password.invalid && (password.touched || createForm.submitted)">
+            <span *ngIf="password.errors?.['required']">Password is required.</span>
+            <span *ngIf="password.errors?.['minlength']">Password must be at least 6 characters.</span>
+          </small>
         </div>
-        <div class="ds-form-group">
-          <label class="ds-label">Role</label>
-          <select class="ds-select" [(ngModel)]="newUser.role[0].roleName" name="role">
-            <option value="ADHERENT">Adhérent</option>
-            <option value="BIBLIOTHECAIRE">Bibliothécaire</option>
-          </select>
-        </div>
+        <!-- Bouton dans le form : (ngSubmit) + validation Angular -->
+        <button class="ds-btn ds-btn-success ds-btn-sm" type="submit" [disabled]="formSubmitting">
+          <i class="fa-solid" [class.fa-spinner-third]="formSubmitting" [class.fa-plus]="!formSubmitting"></i>
+          {{ formSubmitting ? 'Creating...' : 'Create User' }}
+        </button>
       </form>
     </div>
     <div class="modal-footer">
@@ -119,13 +147,6 @@
         (click)="closeCreateModal()"
         [disabled]="formSubmitting">
         Cancel
-      </button>
-      <button
-        class="ds-btn ds-btn-success ds-btn-sm"
-        (click)="onCreateUser()"
-        [disabled]="formSubmitting">
-        <i class="fa-solid" [class.fa-spinner-third]="formSubmitting" [class.fa-plus]="!formSubmitting"></i>
-        {{ formSubmitting ? 'Creating...' : 'Create User' }}
       </button>
     </div>
   </div>

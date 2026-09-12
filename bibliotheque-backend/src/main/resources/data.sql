@@ -22,23 +22,16 @@ INSERT INTO users (user_id, username, password, name)
 SELECT nextval('hibernate_sequence')::integer, 'admin', '$2a$10$kZeiDHtXnCRvKLMEYQ3rbOTqYzL8QGymBGT9RX9TqnGwAbODrC7vK', 'Administrateur'
 WHERE NOT EXISTS (SELECT 1 FROM users WHERE username = 'admin');
 
--- 2b. Si le compte admin existe deja avec un autre mot de passe,
---     on resynchronise son hash sur admin123 (seed auto-correcteur).
-UPDATE users
-SET password = '$2a$10$kZeiDHtXnCRvKLMEYQ3rbOTqYzL8QGymBGT9RX9TqnGwAbODrC7vK'
-WHERE username = 'admin'
-  AND password IS DISTINCT FROM '$2a$10$kZeiDHtXnCRvKLMEYQ3rbOTqYzL8QGymBGT9RX9TqnGwAbODrC7vK';
+-- 2b. PAS de re-synchronisation forcee du mot de passe : un UPDATE au
+--      demarrage ecraserait les mots de passe reels changes via l'API
+--      (c'est ce qui rendait le compte 'user' innavigable apres un restart).
 
 -- 3. Utilisateur exemple (cree uniquement s'il n'existe pas)
 INSERT INTO users (user_id, username, password, name)
 SELECT nextval('hibernate_sequence')::integer, 'user', '$2a$10$33G/VlD2wy8NTb8wBK4L0.iWC2in0ug0TnRi/f0J6XPBflsl0TPPG', 'Utilisateur'
 WHERE NOT EXISTS (SELECT 1 FROM users WHERE username = 'user');
 
--- 3b. Resynchronisation du mot de passe du compte exemple sur user123.
-UPDATE users
-SET password = '$2a$10$33G/VlD2wy8NTb8wBK4L0.iWC2in0ug0TnRi/f0J6XPBflsl0TPPG'
-WHERE username = 'user'
-  AND password IS DISTINCT FROM '$2a$10$33G/VlD2wy8NTb8wBK4L0.iWC2in0ug0TnRi/f0J6XPBflsl0TPPG';
+-- 3b. PAS de re-synchronisation forcee du mot de passe (meme raison que 2b).
 
 -- 4. Liaisons utilisateurs <-> roles du domaine dans la table USER_ROLE
 --    - admin recoit BIBLIOTHECAIRE (gestion complete : livres, utilisateurs, reservations)

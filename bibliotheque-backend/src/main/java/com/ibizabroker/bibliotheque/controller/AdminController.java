@@ -4,6 +4,7 @@ import com.ibizabroker.bibliotheque.dao.RoleRepository;
 import com.ibizabroker.bibliotheque.dao.UsersRepository;
 import com.ibizabroker.bibliotheque.entity.Role;
 import com.ibizabroker.bibliotheque.entity.Users;
+import com.ibizabroker.bibliotheque.exceptions.ConflictException;
 import com.ibizabroker.bibliotheque.exceptions.NotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -12,8 +13,10 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 
 @CrossOrigin("http://localhost:4200/")
 @RestController
@@ -32,17 +35,32 @@ public class AdminController {
     @PostMapping("/users")
     @PreAuthorize("hasRole('BIBLIOTHECAIRE')")
     public Users addUserByAdmin(@RequestBody Users user) {
+        // Validation défensive : le mot de passe ne doit jamais être null/blank
+        // (sinon passwordEncoder.encode() lève "rawPassword cannot be null").
+        if (user.getName() == null || user.getName().isBlank()
+                || user.getUsername() == null || user.getUsername().isBlank()
+                || user.getPassword() == null || user.getPassword().isBlank()) {
+            throw new IllegalArgumentException("Name, username and password are required.");
+        }
+
+        // Unicité du username : sans ce contrôle, un doublon rendait le compte
+        // illistable par findByUsername() et cassait le login des deux lignes.
+        if (usersRepository.findByUsername(user.getUsername()).isPresent()) {
+            throw new ConflictException(
+                    "Username '" + user.getUsername() + "' is already taken.",
+                    "USERNAME_TAKEN");
+        }
+
         String password = user.getPassword();
         String encryptPassword = passwordEncoder.encode(password);
         user.setPassword(encryptPassword);
 
-        // Look up the role by name from the database
-        if (user.getRole() != null && !user.getRole().isEmpty()) {
-            Role requestedRole = user.getRole().iterator().next();
-            Role existingRole = roleRepository.findByRoleName(requestedRole.getRoleName())
-                    .orElseThrow(() -> new NotFoundException("Role '" + requestedRole.getRoleName() + "' does not exist."));
-            user.setRole(new HashSet<>(Collections.singletonList(existingRole)));
-        }
+        // Le rôle est attribué par le backend : tout nouvel utilisateur
+        // créé via ce endpoint est un ADHERENT. Tout rôle envoyé dans le
+        // corps de la requête est ignoré (et écrasé).
+        Role adherentRole = roleRepository.findByRoleName("ADHERENT")
+                .orElseThrow(() -> new NotFoundException("Role 'ADHERENT' does not exist."));
+        user.setRole(new HashSet<>(Collections.singletonList(adherentRole)));
 
         usersRepository.save(user);
         return user;
@@ -66,6 +84,16 @@ public class AdminController {
     public ResponseEntity<Users> updateUser(@PathVariable Integer id, @RequestBody Users userDetails) {
         Users user = usersRepository.findById(id).orElseThrow(() -> new NotFoundException("User with id "+ id +" does not exist."));
 
+        // Unicité du username (en excluant l'utilisateur modifié lui-même)
+        usersRepository.findByUsername(userDetails.getUsername())
+                .ifPresent(existing -> {
+                    if (!existing.getUserId().equals(user.getUserId())) {
+                        throw new ConflictException(
+                                "Username '" + userDetails.getUsername() + "' is already taken.",
+                                "USERNAME_TAKEN");
+                    }
+                });
+
         user.setName(userDetails.getName());
         user.setRole(userDetails.getRole());
         user.setUsername(userDetails.getUsername());
@@ -76,9 +104,14 @@ public class AdminController {
 
     @PreAuthorize("hasRole('BIBLIOTHECAIRE')")
     @DeleteMapping("/users/{id}")
-    public ResponseEntity<String> deleteUser(@PathVariable Integer id) {
+    public ResponseEntity<Map<String, Boolean>> deleteUser(@PathVariable Integer id) {
         Users user = usersRepository.findById(id).orElseThrow(() -> new NotFoundException("User with id " + id + " does not exist."));
         usersRepository.delete(user);
-        return ResponseEntity.ok("User with id " + id + " has been deleted successfully.");
+
+        // Réponse JSON propre (cohérente avec DELETE /admin/books/{id}) :
+        // une string brute déclencherait une erreur de parsing côté Angular.
+        Map<String, Boolean> response = new HashMap<>();
+        response.put("deleted", Boolean.TRUE);
+        return ResponseEntity.ok(response);
     }
 }

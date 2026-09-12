@@ -20,7 +20,14 @@
           <label class="ds-label" for="loginPassword">
             <i class="fa-solid fa-lock" style="margin-right: 0.35rem;"></i> Password
           </label>
-          <input type="password" name="password" ngModel class="ds-input" id="loginPassword" placeholder="Enter your password">
+          <div class="password-field">
+            <input [type]="showPassword ? 'text' : 'password'" name="password" ngModel class="ds-input" id="loginPassword" placeholder="Enter your password" autocomplete="current-password">
+            <button type="button" class="password-toggle" (click)="showPassword = !showPassword"
+                    [attr.aria-label]="showPassword ? 'Masquer le mot de passe' : 'Afficher le mot de passe'"
+                    [attr.aria-pressed]="showPassword">
+              <i class="fa-solid" [class.fa-eye]="!showPassword" [class.fa-eye-slash]="showPassword"></i>
+            </button>
+          </div>
         </div>
         <div *ngIf="errorMessage" class="ds-alert ds-alert-danger ds-mb-4 ds-animate-fadeIn">
           <i class="fa-solid fa-circle-exclamation"></i>

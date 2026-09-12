@@ -9,7 +9,8 @@ import { environment } from '../../environments/environment';
 })
 export class ReservationService {
 
-  private baseURL = `${environment.apiUrl}/reservations`;
+  // Le contrôleur backend expose /api/reservations (cf. @RequestMapping dans ReservationController)
+  private baseURL = `${environment.apiUrl}/api/reservations`;
 
   constructor(private httpClient: HttpClient) { }
 

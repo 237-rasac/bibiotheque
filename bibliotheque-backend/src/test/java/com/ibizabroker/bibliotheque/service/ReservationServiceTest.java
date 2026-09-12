@@ -235,6 +235,29 @@ class ReservationServiceTest {
         assertEquals("RG-01", exception.getRule());
     }
 
+    @Test
+    void createReservation_shouldRejectBookWithNullCopies_RG01() {
+        // ARRANGE : un livre dont la donnée noOfCopies est corrompue (null)
+        givenAuthenticatedAdherent();
+        Books invalidBook = new Books();
+        invalidBook.setBookId(3);
+        invalidBook.setBookName("Livre corrompu");
+        // pas de setNoOfCopies(...) : la valeur reste null
+
+        when(booksRepository.findById(3)).thenReturn(Optional.of(invalidBook));
+        // l'utilisateur courant est chargé avant la vérification des copies
+        when(usersRepository.findById(10)).thenReturn(Optional.of(member));
+
+        // ACT : le service doit rejeter proprement (400), jamais planter (500)
+        IllegalArgumentException exception = assertThrows(IllegalArgumentException.class,
+                () -> reservationService.createReservation(requestFor(3, 10)));
+
+        // ASSERT : message actionnable + aucune réservation touchée
+        assertTrue(exception.getMessage().contains("nombre de copies invalide"));
+        assertTrue(exception.getMessage().contains("Livre corrompu"));
+        verifyNoInteractions(reservationRepository);
+    }
+
     // =============================================
     // RG-02 : pas de doublon actif pour le même livre
     // =============================================

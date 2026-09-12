@@ -1,6 +1,7 @@
 package com.ibizabroker.bibliotheque.configuration;
 
 import com.ibizabroker.bibliotheque.service.JwtService;
+import com.ibizabroker.bibliotheque.util.JwtCookieUtil;
 import com.ibizabroker.bibliotheque.util.JwtUtil;
 import io.jsonwebtoken.JwtException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -38,6 +39,12 @@ public class JwtRequestFilter extends OncePerRequestFilter {
 
         if (requestTokenHeader != null && requestTokenHeader.startsWith("Bearer ")) {
             jwtToken = requestTokenHeader.substring(7);
+        } else {
+            // Pas de header Authorization : repli sur le cookie httpOnly (stockage XSS-safe)
+            jwtToken = JwtCookieUtil.extractJwtFromCookie(request);
+        }
+
+        if (jwtToken != null) {
             try {
                 username = jwtUtil.getUsernameFromToken(jwtToken);
             } catch (IllegalArgumentException e) {
@@ -47,8 +54,6 @@ public class JwtRequestFilter extends OncePerRequestFilter {
                 // ExpiredJwtException, MalformedJwtException, SignatureException...
                 System.out.println("JWT Token invalid or expired");
             }
-        } else {
-            System.out.println("JWT token does not start with Bearer");
         }
 
         if (username != null && SecurityContextHolder.getContext().getAuthentication() == null) {

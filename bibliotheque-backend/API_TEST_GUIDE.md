@@ -38,6 +38,10 @@
 ```
 
 > ⚠️ **Copie le `jwtToken`** et colle-le dans le bouton **"Authorize"** de Swagger (format `eyJhbGci...` sans "Bearer").
+>
+> 🛡️ **Le token embarque les rôles** : un claim `roles` (ex. `["ROLE_ADHERENT"]` ou `["ROLE_BIBLIOTHECAIRE"]`)
+> est ajouté à la génération du JWT. Le frontend peut le décoder (payload Base64) pour adapter l'UI,
+> mais la sécurité reste côté backend (rôles rechargés en base à chaque requête).
 
 ---
 
@@ -45,33 +49,17 @@
 
 ### `POST /admin/users` — Créer un utilisateur
 
-> ❌ Pas de token requis (non sécurisé actuellement)
+> ✅ Nécessite `Authorization: Bearer <token>` avec le rôle **BIBLIOTHECAIRE**
+>
+> 🛡️ **Le rôle est attribué par le backend** : tout nouvel utilisateur créé ici est
+> automatiquement un **ADHERENT**. Tout champ `role` envoyé dans le body est **ignoré**.
 
 **Body :**
 ```json
 {
   "username": "jean.dupont",
   "name": "Jean Dupont",
-  "password": "motdepasse123",
-  "role": [
-    {
-      "roleName": "Admin"
-    }
-  ]
-}
-```
-
-**Pour créer un user normal :**
-```json
-{
-  "username": "marie.martin",
-  "name": "Marie Martin",
-  "password": "motdepasse456",
-  "role": [
-    {
-      "roleName": "User"
-    }
-  ]
+  "password": "motdepasse123"
 }
 ```
 
@@ -84,8 +72,8 @@
   "password": "$2a$10$...",
   "role": [
     {
-      "roleId": 2,
-      "roleName": "Admin"
+      "roleId": 1,
+      "roleName": "ADHERENT"
     }
   ]
 }

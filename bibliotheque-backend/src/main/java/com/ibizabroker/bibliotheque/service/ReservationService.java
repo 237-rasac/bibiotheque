@@ -135,6 +135,11 @@ public class ReservationService {
                         "Utilisateur with id " + currentUserId + " does not exist."));
 
         // RG-01: Book must be currently unavailable (noOfCopies < 1)
+        // Copies null traitées comme "donnée invalide" plutôt que NPE (500).
+        if (book.getNoOfCopies() == null) {
+            throw new IllegalArgumentException(
+                    "Le livre \"" + book.getBookName() + "\" a un nombre de copies invalide. Contactez un bibliothécaire.");
+        }
         if (book.getNoOfCopies() >= 1) {
             throw new ConflictException(
                     "Le livre \"" + book.getBookName() + "\" est disponible (copies restantes: "

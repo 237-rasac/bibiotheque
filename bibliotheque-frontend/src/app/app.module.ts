@@ -14,6 +14,7 @@ import { UserDetailsComponent } from './user-details/user-details.component';
 import { UpdateUserComponent } from './update-user/update-user.component';
 import { LoginComponent } from './login/login.component';
 import { LogoutComponent } from './logout/logout.component';
+import { MyReservationsComponent } from './my-reservations/my-reservations.component';
 import { HeaderComponent } from './header/header.component';
 import { HomeComponent } from './home/home.component';
 import { BooksService } from './_service/books.service';
@@ -51,6 +52,7 @@ import { NotificationComponent } from './notification/notification.component';
     BorrowBookComponent,
     ReturnBookComponent,
     ReservationComponent,
+    MyReservationsComponent,
     ReservationListComponent,
     ReservationFormComponent,
     ReservationDetailsComponent,

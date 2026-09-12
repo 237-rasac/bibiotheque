@@ -15,6 +15,7 @@ import { getResponseMessage } from '../_model/response-messages';
 export class LoginComponent implements OnInit {
 
   errorMessage: string | null = null;
+  showPassword = false;
 
   constructor(private userService: UsersService,
     private userAuthSerivce: UserAuthService,
@@ -29,20 +30,21 @@ export class LoginComponent implements OnInit {
     this.errorMessage = null;
     this.userService.login(loginForm.value).subscribe({
       next: (response: any) => {
-        this.userAuthSerivce.setRoles(response.user.role);
-        this.userAuthSerivce.setToken(response.jwtToken);
+        // Le JWT est posé par le backend dans un cookie httpOnly (Set-Cookie) :
+        // il n'apparaît plus dans la réponse et n'est jamais stocké côté JS.
         this.userAuthSerivce.setUserId(response.user.userId);
         this.userAuthSerivce.setName(response.user.name);
+
+        // Les rôles sont envoyés en clair dans le body de la réponse
+        // (ex: ["ROLE_ADHERENT"]) et normalisés pour le guard.
+        const rolesFromResponse: string[] = response.roles ?? [];
+        const roles = rolesFromResponse.map((roleName: string) => ({ roleName: roleName.replace(/^ROLE_/, '') }));
+        this.userAuthSerivce.setRoles(roles as []);
 
         const successMsg = getResponseMessage('POST', '/authenticate', 200);
         if (successMsg) { this.notification.success(successMsg); }
 
-        const role = response.user.role[0].roleName;
-        if (role === 'BIBLIOTHECAIRE') {
-          this.router.navigate(['/books']);
-        } else {
-          this.router.navigate(['/borrow-book']);
-        }
+        this.redirectByRole(rolesFromResponse);
       },
       error: (err) => {
         this.errorMessage = err.message
@@ -50,5 +52,18 @@ export class LoginComponent implements OnInit {
           || 'Identifiants incorrects.';
       }
     });
+  }
+
+  /** Redirige chaque utilisateur vers son interface selon son rôle. */
+  private redirectByRole(roles: string[]) {
+    if (roles.includes('ROLE_BIBLIOTHECAIRE')) {
+      this.router.navigate(['/books']);
+    } else if (roles.includes('ROLE_ADHERENT')) {
+      // L'adhérent atterrit directement sur ses réservations
+      // (le backend ne renvoie que les siennes : RS-05).
+      this.router.navigate(['/my-reservations']);
+    } else {
+      this.router.navigate(['/forbidden']);
+    }
   }
 }

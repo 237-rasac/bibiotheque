@@ -2,7 +2,6 @@ import { HttpErrorResponse, HttpEvent, HttpHandler, HttpInterceptor, HttpRequest
 import { Router } from '@angular/router';
 import { catchError, tap } from 'rxjs/operators';
 import { Observable, throwError } from 'rxjs';
-import { UserAuthService } from '../_service/user-auth.service';
 import { NotificationService } from '../_service/notification.service';
 import { getResponseMessage } from '../_model/response-messages';
 import { Injectable } from '@angular/core';
@@ -13,18 +12,18 @@ const SILENT_SUCCESS_METHODS = new Set(['GET']);
 @Injectable()
 export class AuthInterceptor implements HttpInterceptor {
   constructor(
-    private userAuthService: UserAuthService,
     private router: Router,
     private notification: NotificationService
   ) {}
 
   intercept(req: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
-    if (req.headers.get('No-Auth') === 'True') {
-      return next.handle(req.clone());
-    }
+    // Le JWT voyage via cookie httpOnly : aucune entête Authorization à ajouter,
+    // il suffit d'autoriser l'envoi/réception des cookies entre origines.
+    req = req.clone({ withCredentials: true });
 
-    const token = this.userAuthService.getToken();
-    req = this.addToken(req, token);
+    if (req.headers.get('No-Auth') === 'True') {
+      return next.handle(req);
+    }
 
     return next.handle(req).pipe(
       // Succès : toast pour les opérations mutate (POST, PUT, PATCH, DELETE)
@@ -73,13 +72,5 @@ export class AuthInterceptor implements HttpInterceptor {
         }));
       })
     );
-  }
-
-  private addToken(request: HttpRequest<any>, token: string) {
-    return request.clone({
-      setHeaders: {
-        Authorization: `Bearer ${token}`
-      }
-    });
   }
 }

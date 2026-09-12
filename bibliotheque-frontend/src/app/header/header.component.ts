@@ -32,6 +32,14 @@ export class HeaderComponent implements OnInit {
   }
 
   public logout() {
+    // Déconnexion serveur d'abord (écrase le cookie httpOnly), puis purge locale.
+    this.userService.logout().subscribe({
+      next: () => this.finishLogout(),
+      error: () => this.finishLogout() // déconnecter quand même côté client
+    });
+  }
+
+  private finishLogout() {
     this.userAuthService.clear();
     this.router.navigate(['/']);
   }

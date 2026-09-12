@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { NgForm } from '@angular/forms';
 import { Router } from '@angular/router';
 import { Books } from '../_model/books'
 import { BooksService } from '../_service/books.service';
@@ -59,7 +60,13 @@ export class BooksListComponent implements OnInit {
     }
   }
 
-  onCreateBook() {
+  onCreateBook(form: NgForm) {
+    // Bloque la requête si le formulaire est invalide (nom requis, copies >= 0)
+    if (form.invalid) {
+      Object.values(form.controls).forEach(control => control.markAsTouched());
+      return;
+    }
+
     this.formSubmitting = true;
     this.booksService.createBook(this.newBook).subscribe({
       next: () => {

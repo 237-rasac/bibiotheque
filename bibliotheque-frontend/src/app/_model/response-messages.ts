@@ -47,6 +47,10 @@ export const RESPONSE_MESSAGES: Record<string, Record<number, string>> = {
     400: 'Champs manquants ou invalides.',
     404: 'Utilisateur introuvable.',
   },
+  'DELETE /admin/users/:id': {
+    200: 'Utilisateur supprimé avec succès.',
+    404: 'Utilisateur introuvable.',
+  },
 
   // ===================== BORROW =====================
   'GET /borrow': {
@@ -149,6 +153,9 @@ export function extractRuleDetails(message: string): string[] {
  */
 export function toSwaggerPattern(url: string): string {
   return url
+    // Retire l'origine (http://localhost:8080) pour que les URLs absolues
+    // d'HttpClient correspondent aux clés relatives du mapping.
+    .replace(/^https?:\/\/[^/]+/, '')
     .replace(/\/admin\/books\/\d+/g, '/admin/books/:id')
     .replace(/\/admin\/users\/\d+/g, '/admin/users/:id')
     .replace(/\/borrow\/user\/\d+/g, '/borrow/user/:id')

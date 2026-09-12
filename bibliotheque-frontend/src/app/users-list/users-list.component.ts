@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { NavigationEnd, Router } from '@angular/router';
 import { filter } from 'rxjs/operators';
+import { NgForm } from '@angular/forms';
 import { Users } from '../_model/users';
 import { UsersService } from '../_service/users.service';
 
@@ -17,6 +18,7 @@ export class UsersListComponent implements OnInit {
 
   showCreateModal = false;
   formSubmitting = false;
+  showPassword = false;
   newUser: Users = new Users();
 
   constructor(private usersService: UsersService,
@@ -50,8 +52,20 @@ export class UsersListComponent implements OnInit {
     this.router.navigate(['update-user', userId ]);
   }
 
+  deleteUser(userId: number) {
+    if (!confirm('Delete this user? This action cannot be undone.')) {
+      return;
+    }
+    this.usersService.deleteUser(userId).subscribe({
+      next: () => { this.getUsers(); },
+      error: () => { /* toast handled by interceptor */ }
+    });
+  }
+
   openCreateModal() {
     this.newUser = new Users();
+    this.formSubmitting = false;
+    this.showPassword = false; // repasse en masqué à chaque ouverture
     this.showCreateModal = true;
   }
 
@@ -61,8 +75,15 @@ export class UsersListComponent implements OnInit {
     }
   }
 
-  onCreateUser() {
+  onCreateUser(form: NgForm) {
+    // Bloque la requête si le formulaire est invalide (champs manquants, etc.)
+    if (form.invalid) {
+      Object.values(form.controls).forEach(control => control.markAsTouched());
+      return;
+    }
+
     this.formSubmitting = true;
+    // Le rôle est attribué par le backend (ADHERENT) : rien à envoyer côté client.
     this.usersService.createUser(this.newUser).subscribe({
       next: () => {
         this.formSubmitting = false;

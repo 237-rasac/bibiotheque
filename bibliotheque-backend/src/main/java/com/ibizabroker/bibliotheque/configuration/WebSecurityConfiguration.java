@@ -41,9 +41,14 @@ public class WebSecurityConfiguration extends WebSecurityConfigurerAdapter {
     protected void configure(HttpSecurity httpSecurity) throws Exception {
         httpSecurity.cors();
         httpSecurity.csrf().disable()
-                // Endpoints publics : authentification, Swagger et préflight CORS.
+                // API stateless : le JWT vit dans un cookie httpOnly, on désactive
+                // le LogoutFilter par défaut de Spring (qui ferait une 302 vers /login?logout)
+                // pour laisser notre endpoint REST /logout écraser le cookie.
+                .logout().disable()
+                // Endpoints publics : authentification, déconnexion (pour pouvoir écraser
+                // le cookie même avec un token expiré), Swagger et préflight CORS.
                 // Toute l'API de réservation (/api/reservations/**) est protégée : sans token -> 401 (RS-01).
-                .authorizeRequests().antMatchers("/authenticate", "/swagger-ui.html", "/swagger-ui/**",
+                .authorizeRequests().antMatchers("/authenticate", "/logout", "/swagger-ui.html", "/swagger-ui/**",
                         "/api-docs/**", "/v3/api-docs/**").permitAll()
                 .antMatchers(HttpMethod.OPTIONS).permitAll()
                 .antMatchers(HttpHeaders.ALLOW).permitAll()
