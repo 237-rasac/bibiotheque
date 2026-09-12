@@ -32,6 +32,7 @@ import { ReservationFormComponent } from './reservation-form/reservation-form.co
 import { ReservationDetailsComponent } from './reservation-details/reservation-details.component';
 import { SidebarComponent } from './sidebar/sidebar.component';
 import { ConfirmModalComponent } from './confirm-modal/confirm-modal.component';
+import { DashboardComponent } from './dashboard/dashboard.component';
 import { NotificationComponent } from './notification/notification.component';
 
 @NgModule({
@@ -58,6 +59,7 @@ import { NotificationComponent } from './notification/notification.component';
     ReservationListComponent,
     ReservationFormComponent,
     ReservationDetailsComponent,
+    DashboardComponent,
     SidebarComponent,
     NotificationComponent,
     ConfirmModalComponent,

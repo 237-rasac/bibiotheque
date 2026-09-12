@@ -32,6 +32,13 @@
     <ul class="ds-sidebar-links">
       <!-- Admin links -->
       <li *ngIf="userService.roleMatch(['BIBLIOTHECAIRE'])">
+        <a routerLink="/dashboard" routerLinkActive="active" class="ds-sidebar-link" [title]="collapsed ? 'Dashboard' : ''">
+          <i class="fa-solid fa-chart-pie"></i>
+          <span class="ds-sidebar-label">Dashboard</span>
+        </a>
+      </li>
+
+      <li *ngIf="userService.roleMatch(['BIBLIOTHECAIRE'])">
         <a routerLink="/books" routerLinkActive="active" class="ds-sidebar-link" [title]="collapsed ? 'Books' : ''">
           <i class="fa-solid fa-book"></i>
           <span class="ds-sidebar-label">Books</span>

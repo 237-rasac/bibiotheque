@@ -57,7 +57,8 @@ export class LoginComponent implements OnInit {
   /** Redirige chaque utilisateur vers son interface selon son rôle. */
   private redirectByRole(roles: string[]) {
     if (roles.includes('ROLE_BIBLIOTHECAIRE')) {
-      this.router.navigate(['/books']);
+      // Le dashboard est le premier écran de l'admin après connexion.
+      this.router.navigate(['/dashboard']);
     } else if (roles.includes('ROLE_ADHERENT')) {
       // L'adhérent atterrit directement sur ses réservations
       // (le backend ne renvoie que les siennes : RS-05).

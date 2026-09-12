@@ -17,8 +17,10 @@ import { AuthGuard } from './_auth/auth.guard';
 import { ReservationComponent } from './reservation/reservation.component';
 import { ReservationDetailsComponent } from './reservation-details/reservation-details.component';
 import { MyReservationsComponent } from './my-reservations/my-reservations.component';
+import { DashboardComponent } from './dashboard/dashboard.component';
 
 const routes: Routes = [
+  {path: 'dashboard', component: DashboardComponent, canActivate:[AuthGuard], data:{roles:['BIBLIOTHECAIRE']}},
   {path: 'books', component: BooksListComponent, canActivate:[AuthGuard], data:{roles:['BIBLIOTHECAIRE']}},
   {path: 'create-book', component: CreateBookComponent, canActivate:[AuthGuard], data:{roles:['BIBLIOTHECAIRE']}},
   {path: '', component: HomeComponent},
