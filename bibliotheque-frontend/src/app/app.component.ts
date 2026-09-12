@@ -12,7 +12,12 @@ import { UserAuthService } from './_service/user-auth.service';
 export class AppComponent implements OnInit, OnDestroy {
   title = 'Library Management System';
   showSidebar = false;
+  showHeader = true;
+  showLandingHeader = false;
   private sub!: Subscription;
+
+  private hideHeaderRoutes = ['/login'];
+  private landingRoutes = ['/'];
 
   constructor(
     private userAuthService: UserAuthService,
@@ -20,10 +25,10 @@ export class AppComponent implements OnInit, OnDestroy {
   ) {}
 
   ngOnInit() {
-    this.checkSidebar();
+    this.evaluateVisibility();
     this.sub = this.router.events.subscribe(event => {
       if (event instanceof NavigationEnd) {
-        this.checkSidebar();
+        this.evaluateVisibility();
       }
     });
   }
@@ -32,7 +37,16 @@ export class AppComponent implements OnInit, OnDestroy {
     this.sub?.unsubscribe();
   }
 
-  private checkSidebar() {
+  private evaluateVisibility() {
+    const url = this.router.url.split('?')[0];
+    const onLanding = this.landingRoutes.includes(url) && !this.userAuthService.isLoggedIn();
+
+    // /login : page dédiée, aucun header (landing ou app), juste le formulaire.
+    this.showLandingHeader = onLanding && !this.hideHeaderRoutes.includes(url);
+    // Authenticated app: app header + sidebar as before.
     this.showSidebar = !!this.userAuthService.isLoggedIn();
+    this.showHeader = !this.userAuthService.isLoggedIn()
+      ? !onLanding && !this.hideHeaderRoutes.includes(url)
+      : !this.hideHeaderRoutes.includes(url);
   }
 }

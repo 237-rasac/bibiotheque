@@ -1,6 +1,6 @@
 .ds-sidebar {
   position: fixed;
-  top: 64px;
+  top: 0;
   left: 0;
   bottom: 0;
   width: 220px;
@@ -229,4 +229,18 @@
 @keyframes ds-fadeIn {
   from { opacity: 0; }
   to { opacity: 1; }
+}
+
+/* Logout button in sidebar footer */
+.ds-sidebar-link-logout {
+  width: 100%;
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-family: var(--ds-font-sans);
+}
+
+.ds-sidebar-link-logout:hover {
+  color: var(--ds-danger) !important;
+  background: var(--ds-danger-light);
 }

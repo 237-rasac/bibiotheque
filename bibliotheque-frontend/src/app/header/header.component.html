@@ -1,20 +1,12 @@
 <header class="ds-header ds-animate-slideDown">
   <nav class="ds-nav">
     <div class="ds-nav-inner container">
-      <a class="ds-nav-brand" routerLink="/">
-        <i class="fa-solid fa-book-open"></i>
-        <span>LibraryMS</span>
-      </a>
-
       <div class="ds-nav-actions">
         <span *ngIf="isLoggedIn()" class="ds-nav-user">
           <i class="fa-solid fa-circle-user"></i> {{ name }}
         </span>
         <button *ngIf="!isLoggedIn()" class="ds-btn ds-btn-primary ds-btn-sm" routerLink="/login">
           <i class="fa-solid fa-right-to-bracket"></i> Login
-        </button>
-        <button *ngIf="isLoggedIn()" class="ds-btn ds-btn-outline-danger ds-btn-sm" (click)="logout()">
-          <i class="fa-solid fa-right-from-bracket"></i> Logout
         </button>
         <button class="ds-btn ds-btn-ghost ds-btn-icon ds-btn-sm" (click)="toggleTheme()" [title]="isDark ? 'Switch to light mode' : 'Switch to dark mode'">
           <i class="fa-solid" [class.fa-moon]="!isDark" [class.fa-sun]="isDark"></i>

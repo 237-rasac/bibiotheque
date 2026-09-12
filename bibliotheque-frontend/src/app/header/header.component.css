@@ -1,17 +1,19 @@
 .ds-header {
   background: var(--ds-bg-elevated);
   border-bottom: 1px solid var(--ds-border);
-  position: sticky;
+  position: fixed;
   top: 0;
+  left: 220px;
+  right: 0;
   z-index: var(--ds-z-sticky, 1020);
   box-shadow: var(--ds-shadow-sm);
-  transition: background-color var(--ds-transition-slow), border-color var(--ds-transition-slow);
+  transition: background-color var(--ds-transition-slow), border-color var(--ds-transition-slow), left var(--ds-transition-slow);
 }
 
 .ds-nav-inner {
   display: flex;
   align-items: center;
-  justify-content: space-between;
+  justify-content: flex-end;
   height: 64px;
   gap: var(--ds-space-4);
 }
@@ -60,13 +62,13 @@
 }
 
 @media (max-width: 992px) {
+  .ds-header {
+    left: 0;
+  }
+
   .ds-nav-inner {
     padding: 0;
     width: 100%;
-  }
-
-  .ds-nav-brand {
-    font-size: var(--ds-text-lg);
   }
 
   .ds-nav-actions {

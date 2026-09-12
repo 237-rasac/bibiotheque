@@ -1,5 +1,10 @@
 .ds-main {
-  min-height: calc(100vh - 64px);
+  min-height: 100vh;
+  padding-top: 64px;
+}
+
+.ds-main-no-header {
+  padding-top: 0;
 }
 
 .ds-main-with-sidebar {
@@ -13,6 +18,16 @@
 
 .ds-main .ds-main-content {
   padding: 1.5rem 2rem 3rem;
+}
+
+/* Landing route: full-bleed marketing layout, no sidebar offset */
+.ds-main--landing {
+  margin-left: 0;
+  padding-top: 0;
+}
+
+.ds-main--landing .ds-main-content {
+  padding: 0;
 }
 
 @media (max-width: 992px) {

@@ -76,9 +76,9 @@
 
   <!-- Sidebar footer -->
   <div class="ds-sidebar-footer">
-    <a routerLink="/" class="ds-sidebar-link" [title]="collapsed ? 'Home' : ''">
-      <i class="fa-solid fa-house"></i>
-      <span class="ds-sidebar-label">Home</span>
-    </a>
+    <button class="ds-sidebar-link ds-sidebar-link-logout" (click)="logout()" [title]="collapsed ? 'Logout' : ''">
+      <i class="fa-solid fa-right-from-bracket"></i>
+      <span class="ds-sidebar-label">Logout</span>
+    </button>
   </div>
 </aside>

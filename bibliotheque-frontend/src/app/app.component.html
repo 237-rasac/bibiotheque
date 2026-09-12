@@ -1,7 +1,12 @@
 <app-notification></app-notification>
-<app-header></app-header>
+<app-landing-header *ngIf="showLandingHeader"></app-landing-header>
+<app-header *ngIf="showHeader"></app-header>
 <app-sidebar *ngIf="showSidebar"></app-sidebar>
-<main class="ds-main" [class.ds-main-with-sidebar]="showSidebar">
+<main
+  class="ds-main"
+  [class.ds-main-with-sidebar]="showSidebar"
+  [class.ds-main-no-header]="!showHeader"
+  [class.ds-main--landing]="showLandingHeader">
   <div class="ds-main-content">
     <router-outlet></router-outlet>
   </div>

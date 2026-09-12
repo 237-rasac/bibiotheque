@@ -34,6 +34,18 @@ export class SidebarComponent implements OnInit {
     return !!this.userAuthService.isLoggedIn();
   }
 
+  logout() {
+    this.userService.logout().subscribe({
+      next: () => this.finishLogout(),
+      error: () => this.finishLogout()
+    });
+  }
+
+  private finishLogout() {
+    this.userAuthService.clear();
+    this.router.navigate(['/']);
+  }
+
   toggleCollapse() {
     this.collapsed = !this.collapsed;
   }

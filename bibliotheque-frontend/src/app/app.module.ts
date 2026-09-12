@@ -16,6 +16,7 @@ import { LoginComponent } from './login/login.component';
 import { LogoutComponent } from './logout/logout.component';
 import { MyReservationsComponent } from './my-reservations/my-reservations.component';
 import { HeaderComponent } from './header/header.component';
+import { LandingHeaderComponent } from './landing-header/landing-header.component';
 import { HomeComponent } from './home/home.component';
 import { BooksService } from './_service/books.service';
 import { UsersService } from './_service/users.service';
@@ -47,6 +48,7 @@ import { NotificationComponent } from './notification/notification.component';
     LoginComponent,
     LogoutComponent,
     HeaderComponent,
+    LandingHeaderComponent,
     HomeComponent,
     ForbiddenComponent,
     BorrowBookComponent,

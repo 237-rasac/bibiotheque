@@ -1,14 +1,214 @@
-<div class="ds-empty-state ds-animate-scaleIn home-hero">
-  <div style="font-size: 5rem; margin-bottom: 1.5rem;">
-    <i class="fa-solid fa-book-open ds-animate-fadeIn" style="color: var(--ds-primary); opacity: 0.6;"></i>
+<!-- HERO SECTION -->
+<section class="lp-hero">
+  <div class="lp-hero-bg">
+    <div class="lp-hero-shape lp-hero-shape-1"></div>
+    <div class="lp-hero-shape lp-hero-shape-2"></div>
+    <div class="lp-hero-shape lp-hero-shape-3"></div>
   </div>
-  <h1 style="margin-bottom: 0.5rem;">Library Management System</h1>
-  <p style="font-size: var(--ds-text-lg); max-width: 500px;">
-    Manage your library catalog, track borrows, and handle reservations — all in one place.
-  </p>
-  <div class="ds-flex ds-gap-3 ds-mt-6" style="flex-wrap: wrap; justify-content: center;">
-    <a routerLink="/login" class="ds-btn ds-btn-primary ds-btn-lg">
-      <i class="fa-solid fa-right-to-bracket"></i> Get Started
-    </a>
+  <div class="lp-container lp-hero-content" id="lp-hero-anchor">
+    <div class="lp-hero-badge">
+      <i class="fa-solid fa-sparkles"></i> Plateforme de gestion moderne
+    </div>
+    <h1 class="lp-hero-title">
+      Gérez votre bibliothèque avec <span class="lp-gradient-text">simplicité</span>
+    </h1>
+    <p class="lp-hero-subtitle">
+      Cataloguez vos livres, suivez les emprunts et gérez les réservations — tout en un seul endroit. Une solution complète pour les bibliothèques modernes.
+    </p>
+    <div class="lp-hero-actions">
+      <a routerLink="/login" class="ds-btn ds-btn-primary ds-btn-lg lp-btn-primary">
+        <i class="fa-solid fa-right-to-bracket"></i> Commencer
+      </a>
+      <a routerLink="/login" class="ds-btn ds-btn-ghost ds-btn-lg lp-btn-ghost">
+        <i class="fa-solid fa-play"></i> Voir la démo
+      </a>
+    </div>
+    <div class="lp-hero-stats">
+      <div class="lp-hero-stat">
+        <span class="lp-hero-stat-icon"><i class="fa-solid fa-book"></i></span>
+        <span class="lp-hero-stat-label">Livres gérés</span>
+      </div>
+      <div class="lp-hero-stat">
+        <span class="lp-hero-stat-icon"><i class="fa-solid fa-users"></i></span>
+        <span class="lp-hero-stat-label">Utilisateurs actifs</span>
+      </div>
+      <div class="lp-hero-stat">
+        <span class="lp-hero-stat-icon"><i class="fa-solid fa-calendar-check"></i></span>
+        <span class="lp-hero-stat-label">Réservations</span>
+      </div>
+    </div>
   </div>
-</div>
+</section>
+
+<!-- FEATURES SECTION -->
+<section class="lp-section lp-features" id="lp-features-section">
+  <div class="lp-container">
+    <div class="lp-section-header">
+      <span class="lp-section-tag">Fonctionnalités</span>
+      <h2>Tout ce dont vous avez besoin</h2>
+      <p>Une solution complète pour gérer chaque aspect de votre bibliothèque</p>
+    </div>
+    <div class="lp-features-grid">
+      <div class="lp-feature-card">
+        <div class="lp-feature-icon lp-feature-icon-primary">
+          <i class="fa-solid fa-book-open"></i>
+        </div>
+        <h3>Gestion du catalogue</h3>
+        <p>Ajoutez, modifiez et recherchez vos livres facilement. Suivez l'historique complet de chaque ouvrage.</p>
+      </div>
+      <div class="lp-feature-card">
+        <div class="lp-feature-icon lp-feature-icon-success">
+          <i class="fa-solid fa-hand-holding-book"></i>
+        </div>
+        <h3>Emprunts & Retours</h3>
+        <p>Gérez les emprunts et retours en quelques clics. Suivez les dates d'échéance automatiquement.</p>
+      </div>
+      <div class="lp-feature-card">
+        <div class="lp-feature-icon lp-feature-icon-accent">
+          <i class="fa-solid fa-calendar-check"></i>
+        </div>
+        <h3>Réservations</h3>
+        <p>Permettez à vos adhérents de réserver des livres en ligne. Gestion intelligente des disponibilités.</p>
+      </div>
+      <div class="lp-feature-card">
+        <div class="lp-feature-icon lp-feature-icon-secondary">
+          <i class="fa-solid fa-users-gear"></i>
+        </div>
+        <h3>Gestion des utilisateurs</h3>
+        <p>Administrez les comptes adhérents et bibliothécaires avec des rôles et permissions distincts.</p>
+      </div>
+      <div class="lp-feature-card">
+        <div class="lp-feature-icon lp-feature-icon-warning">
+          <i class="fa-solid fa-chart-line"></i>
+        </div>
+        <h3>Tableau de bord</h3>
+        <p>Visualisez les statistiques clés : emprunts, retards, livres populaires et tendances.</p>
+      </div>
+      <div class="lp-feature-card">
+        <div class="lp-feature-icon lp-feature-icon-danger">
+          <i class="fa-solid fa-shield-halved"></i>
+        </div>
+        <h3>Sécurité & Rôles</h3>
+        <p>Authentification sécurisée avec gestion des rôles bibliothécaire et adhérent. Données protégées.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- HOW IT WORKS -->
+<section class="lp-section lp-how-it-works" id="lp-how-section">
+  <div class="lp-container">
+    <div class="lp-section-header">
+      <span class="lp-section-tag">Comment ça marche</span>
+      <h2>Simple et intuitif</h2>
+      <p>Commencez à gérer votre bibliothèque en 3 étapes</p>
+    </div>
+    <div class="lp-steps">
+      <div class="lp-step">
+        <div class="lp-step-number">1</div>
+        <div class="lp-step-content">
+          <h3>Créez votre compte</h3>
+          <p>Inscrivez-vous en tant que bibliothécaire ou adhérent pour accéder à la plateforme.</p>
+        </div>
+      </div>
+      <div class="lp-step-connector">
+        <i class="fa-solid fa-arrow-right"></i>
+      </div>
+      <div class="lp-step">
+        <div class="lp-step-number">2</div>
+        <div class="lp-step-content">
+          <h3>Gérez votre catalogue</h3>
+          <p>Ajoutez vos livres, organisez-les et configurez les options d'emprunt et de réservation.</p>
+        </div>
+      </div>
+      <div class="lp-step-connector">
+        <i class="fa-solid fa-arrow-right"></i>
+      </div>
+      <div class="lp-step">
+        <div class="lp-step-number">3</div>
+        <div class="lp-step-content">
+          <h3>Suivez et optimisez</h3>
+          <p>Consultez les statistiques, gérez les retours et optimisez la gestion de votre bibliothèque.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- STATS SECTION -->
+<section class="lp-section lp-stats-section" id="lp-stats-section">
+  <div class="lp-container">
+    <div class="lp-stats-grid">
+      <div class="lp-stat-card">
+        <div class="lp-stat-icon"><i class="fa-solid fa-book"></i></div>
+        <div class="lp-stat-value">1000+</div>
+        <div class="lp-stat-label">Livres référencés</div>
+      </div>
+      <div class="lp-stat-card">
+        <div class="lp-stat-icon"><i class="fa-solid fa-users"></i></div>
+        <div class="lp-stat-value">500+</div>
+        <div class="lp-stat-label">Utilisateurs actifs</div>
+      </div>
+      <div class="lp-stat-card">
+        <div class="lp-stat-icon"><i class="fa-solid fa-handshake"></i></div>
+        <div class="lp-stat-value">50+</div>
+        <div class="lp-stat-label">Emprunts par jour</div>
+      </div>
+      <div class="lp-stat-card">
+        <div class="lp-stat-icon"><i class="fa-solid fa-star"></i></div>
+        <div class="lp-stat-value">99%</div>
+        <div class="lp-stat-label">Satisfaction</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CTA SECTION -->
+<section class="lp-section lp-cta-section">
+  <div class="lp-container">
+    <div class="lp-cta-card">
+      <div class="lp-cta-content">
+        <h2>Prêt à moderniser votre bibliothèque ?</h2>
+        <p>Rejoignez les bibliothèques qui ont déjà adopté notre solution pour une gestion plus efficace et moderne.</p>
+        <div class="lp-cta-actions">
+          <a routerLink="/login" class="ds-btn ds-btn-primary ds-btn-lg lp-btn-primary">
+            <i class="fa-solid fa-rocket"></i> Démarrer maintenant
+          </a>
+        </div>
+      </div>
+      <div class="lp-cta-decoration">
+        <i class="fa-solid fa-book-open"></i>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer class="lp-footer">
+  <div class="lp-container">
+    <div class="lp-footer-content">
+      <div class="lp-footer-brand">
+        <div class="lp-footer-logo">
+          <i class="fa-solid fa-book-open"></i>
+          <span>LibraryMS</span>
+        </div>
+        <p>La solution moderne pour la gestion de bibliothèques. Simple, rapide et efficace.</p>
+      </div>
+      <div class="lp-footer-links">
+        <div class="lp-footer-col">
+          <h4>Produit</h4>
+          <a routerLink="/login">Connexion</a>
+          <a routerLink="/login">Inscription</a>
+        </div>
+        <div class="lp-footer-col">
+          <h4>Ressources</h4>
+          <a href="#">Documentation</a>
+          <a href="#">Support</a>
+        </div>
+      </div>
+    </div>
+    <div class="lp-footer-bottom">
+      <p>&copy; 2026 LibraryMS. Tous droits réservés.</p>
+    </div>
+  </div>
+</footer>
