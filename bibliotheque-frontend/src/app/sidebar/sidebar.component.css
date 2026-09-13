@@ -125,6 +125,25 @@
   background: var(--ds-bg-hover);
 }
 
+/* Icon micro-interaction on hover */
+.ds-sidebar-link:hover i {
+  transform: scale(1.12);
+}
+
+.ds-sidebar-link i {
+  transition: transform var(--ds-transition);
+}
+
+/* Brief pulse on the freshly-activated link after navigation */
+.ds-sidebar-link--pulse {
+  animation: dsNavPulse 0.35s ease-out;
+}
+
+@keyframes dsNavPulse {
+  0% { background: var(--ds-primary-light); }
+  100% { background: transparent; }
+}
+
 .ds-sidebar-link.active {
   color: var(--ds-primary);
   background: var(--ds-primary-light);

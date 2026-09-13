@@ -1,7 +1,7 @@
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { NgForm } from '@angular/forms';
-import { Observable } from 'rxjs';
+import { Observable, BehaviorSubject } from 'rxjs';
 import { Users } from '../_model/users';
 import { UserAuthService } from './user-auth.service';
 import { environment } from '../../environments/environment';
@@ -20,6 +20,14 @@ export class UsersService {
     private httpClient: HttpClient,
     private userAuthService: UserAuthService
   ) { }
+
+  /** Sidebar collapse state, shared with embedded components. */
+  private sidebarCollapsedSubject = new BehaviorSubject<boolean>(false);
+  readonly sidebarCollapsed$ = this.sidebarCollapsedSubject.asObservable();
+
+  setSidebarCollapsed(collapsed: boolean): void {
+    this.sidebarCollapsedSubject.next(collapsed);
+  }
 
   /** Login : envoie les identifiants et accepte le cookie httpOnly posé par le backend. */
   public login(loginData: NgForm) {
