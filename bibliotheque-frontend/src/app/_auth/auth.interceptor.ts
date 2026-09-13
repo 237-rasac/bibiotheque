@@ -3,7 +3,7 @@ import { Router } from '@angular/router';
 import { catchError, tap } from 'rxjs/operators';
 import { Observable, throwError } from 'rxjs';
 import { NotificationService } from '../_service/notification.service';
-import { getResponseMessage } from '../_model/response-messages';
+import { getResponseMessage, extractRuleDetails } from '../_model/response-messages';
 import { Injectable } from '@angular/core';
 
 /** URLs qui ne doivent PAS déclencher de toast succès (listes, détails, etc.) */
@@ -29,9 +29,16 @@ export class AuthInterceptor implements HttpInterceptor {
       // Succès : toast pour les opérations mutate (POST, PUT, PATCH, DELETE)
       tap((event) => {
         if (event instanceof HttpResponse && !SILENT_SUCCESS_METHODS.has(req.method)) {
-          const swaggerMsg = getResponseMessage(req.method, req.url, event.status);
-          if (swaggerMsg) {
-            this.notification.success(swaggerMsg);
+          // Priorité au message renvoyé par le backend dans le body
+          // (ex: { message: "..." }), sinon fallback sur le message swagger.
+          const body = event.body;
+          const backendMsg =
+            body && typeof body === 'object' && typeof (body as { message?: unknown }).message === 'string'
+              ? ((body as { message: string }).message).trim()
+              : '';
+          const message = backendMsg || getResponseMessage(req.method, req.url, event.status);
+          if (message) {
+            this.notification.success(message);
           }
         }
       }),
@@ -60,6 +67,10 @@ export class AuthInterceptor implements HttpInterceptor {
             || `Erreur serveur (${err.status}). Veuillez réessayer.`;
         }
 
+        // Déplier les codes règles métier (RG-01, RG-02...) en descriptions
+        // lisibles, pour le toast et pour les erreurs affichées inline.
+        message = this.expandRuleCodes(message);
+
         this.notification.error(message);
 
         // Renvoyer l'erreur enrichie pour que les composants puissent
@@ -72,5 +83,18 @@ export class AuthInterceptor implements HttpInterceptor {
         }));
       })
     );
+  }
+
+  /**
+   * Ajoute la description lisible de chaque code RG présent dans le message.
+   * Ex: "Règle métier violée (RG-01)."
+   *  → "Règle métier violée (RG-01).\n• RG-01 : Un adhérent ne peut pas réserver..."
+   */
+  private expandRuleCodes(message: string): string {
+    const details = extractRuleDetails(message);
+    if (details.length === 0) {
+      return message;
+    }
+    return `${message}\n${details.map(d => `• ${d}`).join('\n')}`;
   }
 }

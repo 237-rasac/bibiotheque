@@ -89,10 +89,11 @@ export class DashboardComponent implements AfterViewInit, OnDestroy {
         // Give the DOM a tick so the KPI nodes exist before animating.
         setTimeout(() => this.setupCountUps());
       },
-      error: () => {
+      error: (err) => {
         this.loading = false;
         this.hasError = true;
-        this.error = 'Unable to load the dashboard data.';
+        // Message renvoyé par le backend (enrichi par l'interceptor).
+        this.error = err?.message || 'Unable to load the dashboard data.';
       }
     });
   }

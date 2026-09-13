@@ -70,6 +70,7 @@ import { NotificationService, Toast } from '../_service/notification.service';
       font-weight: 500;
       line-height: 1.4;
       color: var(--ds-text, #1E293B);
+      white-space: pre-line; /* respecte les \n (ex: détails RG-01..RG-07) */
     }
 
     .toast-close {

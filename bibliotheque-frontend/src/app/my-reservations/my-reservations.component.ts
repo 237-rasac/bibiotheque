@@ -36,9 +36,10 @@ export class MyReservationsComponent implements OnInit {
         this.reservations = data;
         this.loading = false;
       },
-      error: () => {
+      error: (err) => {
         this.loading = false;
-        this.error = 'Impossible de charger vos réservations.';
+        // Message renvoyé par le backend (enrichi par l'interceptor).
+        this.error = err?.message || 'Impossible de charger vos réservations.';
       }
     });
   }

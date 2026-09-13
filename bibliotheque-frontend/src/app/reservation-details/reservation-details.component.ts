@@ -39,9 +39,10 @@ export class ReservationDetailsComponent implements OnInit {
         this.reservation = data;
         this.loading = false;
       },
-      error: () => {
+      error: (err) => {
         this.loading = false;
-        this.error = 'Failed to load reservation details.';
+        // Message renvoyé par le backend (enrichi par l'interceptor).
+        this.error = err?.message || 'Failed to load reservation details.';
       }
     });
   }

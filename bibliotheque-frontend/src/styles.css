@@ -149,7 +149,7 @@ p { color: var(--ds-text-secondary); line-height: var(--ds-leading-relaxed); mar
 
 .ds-alert { display: flex; align-items: flex-start; gap: var(--ds-space-3); padding: var(--ds-space-4); border-radius: var(--ds-radius-lg); border: 1px solid transparent; font-size: var(--ds-text-sm); line-height: var(--ds-leading-normal); }
 .ds-alert i { font-size: var(--ds-text-lg); flex-shrink: 0; margin-top: 1px; }
-.ds-alert-content { flex: 1; }
+.ds-alert-content { flex: 1; white-space: pre-line; /* respecte les \n (détails RG) */ }
 .ds-alert-title { font-weight: 600; margin-bottom: var(--ds-space-1); }
 .ds-alert-success { background: var(--ds-success-light); border-color: var(--ds-success); color: var(--ds-success-dark); }
 .ds-alert-danger { background: var(--ds-danger-light); border-color: var(--ds-danger); color: var(--ds-danger); }
