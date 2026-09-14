@@ -226,7 +226,9 @@
 }
 
 /* ---- Responsive ------------------------------------------- */
-@media (max-width: 768px) {
+/* Collapse into the burger early (≤900px): below that the desktop nav,
+   login link and CTA would cramp the bar on small tablets/landscape phones. */
+@media (max-width: 900px) {
   .lp-header-nav,
   .lp-header-login,
   .lp-header-cta {
@@ -240,5 +242,18 @@
   .lp-header-inner {
     min-height: 64px;
     padding: var(--ds-space-2) var(--ds-space-4);
+  }
+}
+
+/* Small phones: slightly smaller brand to keep the bar on one line. */
+@media (max-width: 400px) {
+  .lp-header-logo {
+    width: 34px;
+    height: 34px;
+    font-size: 0.95rem;
+  }
+
+  .lp-header-name {
+    font-size: var(--ds-text-lg);
   }
 }

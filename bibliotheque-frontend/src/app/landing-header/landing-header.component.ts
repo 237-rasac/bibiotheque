@@ -40,7 +40,7 @@ export class LandingHeaderComponent implements OnInit, OnDestroy {
 
     const onScroll = () => this.onWindowScroll();
     const onResize = () => {
-      if (window.innerWidth > 768 && this.isMenuOpen) {
+      if (window.innerWidth > 900 && this.isMenuOpen) {
         this.isMenuOpen = false;
       }
     };

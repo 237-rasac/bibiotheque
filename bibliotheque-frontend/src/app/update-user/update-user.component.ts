@@ -20,7 +20,11 @@ export class UpdateUserComponent implements OnInit {
 
   ngOnInit(): void {
     this.userId = this.route.snapshot.params['userId'];
+    // Le select du template lie user.role[0].roleName : prévoir un rôle par
+    // défaut pour le rendu initial, avant l'arrivée des données.
+    this.user.role = [{ roleName: 'ADHERENT' }];
     this.usersService.getUserById(this.userId).subscribe({
+      next: (data) => { this.user = data; },
       error: () => { /* toast handled by interceptor */ }
     });
   }

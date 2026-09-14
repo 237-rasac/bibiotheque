@@ -75,3 +75,64 @@
 @media(max-width:992px){.lp-features-grid{grid-template-columns:repeat(2,1fr)}.lp-stats-grid{grid-template-columns:repeat(2,1fr)}.lp-steps{flex-direction:column;align-items:center}.lp-step-connector{transform:rotate(90deg);padding:var(--ds-space-2) 0}.lp-cta-card{flex-direction:column;text-align:center;padding:var(--ds-space-8) var(--ds-space-6)}.lp-cta-decoration{display:none}.lp-footer-content{flex-direction:column;text-align:center}.lp-footer-brand{max-width:100%}.lp-footer-links{justify-content:center}}
 @media(max-width:768px){.lp-hero{min-height:80vh}.lp-hero-title{font-size:clamp(2rem,6vw,3rem)}.lp-section{padding:var(--ds-space-10) 0}.lp-features-grid{grid-template-columns:1fr}.lp-stats-grid{grid-template-columns:1fr 1fr}}
 @media(max-width:576px){.lp-hero{min-height:70vh}.lp-hero-actions{flex-direction:column;align-items:center}.lp-hero-stats{flex-direction:column;align-items:center;gap:var(--ds-space-4)}.lp-btn-primary,.lp-btn-ghost{width:100%;max-width:280px}.lp-footer-links{flex-direction:column;gap:var(--ds-space-6)}}
+
+/* ===== FINE-TUNED RESPONSIVENESS ===== */
+
+/* Short landscape viewports (phones in landscape, small laptop with docked
+   taskbar): keep the hero fully visible without forcing a tall scroll. */
+@media(max-height:600px) and (orientation:landscape){
+  .lp-hero{min-height:100vh;padding:var(--ds-space-10) 0}
+  .lp-hero-title{font-size:clamp(1.6rem,4vw,2.4rem);margin-bottom:var(--ds-space-4)}
+  .lp-hero-subtitle{margin-bottom:var(--ds-space-5);font-size:var(--ds-text-sm)}
+  .lp-hero-actions{margin-bottom:var(--ds-space-6)}
+  .lp-hero-badge{margin-bottom:var(--ds-space-4)}
+  .lp-hero-actions .ds-btn{padding:var(--ds-space-2) var(--ds-space-6)!important;font-size:var(--ds-text-sm)!important}
+  .lp-hero-stats{gap:var(--ds-space-6)}
+}
+
+/* Tablets & below: lighten the hero decorations and container padding. */
+@media(max-width:992px){
+  .lp-hero-shape-1{width:320px;height:320px}
+  .lp-hero-shape-2{width:260px;height:260px}
+  .lp-hero-shape-3{width:180px;height:180px}
+  .lp-container{padding:0 var(--ds-space-4)}
+  .lp-cta-content p{font-size:var(--ds-text-base)}
+}
+
+/* Large phones: single column stats, compact cards, smaller CTA decoration. */
+@media(max-width:640px){
+  .lp-hero{min-height:auto;padding:var(--ds-space-12) 0 var(--ds-space-10)}
+  .lp-hero-stat-label{font-size:var(--ds-text-xs)}
+  .lp-hero-stat-icon{width:34px;height:34px;font-size:var(--ds-text-xs)}
+  .lp-section-header p{font-size:var(--ds-text-base)}
+  .lp-feature-card{padding:var(--ds-space-6) var(--ds-space-5)}
+  .lp-feature-icon{width:48px;height:48px;font-size:1.25rem;margin-bottom:var(--ds-space-4)}
+  .lp-stats-grid{grid-template-columns:1fr 1fr}
+  .lp-stat-value{font-size:var(--ds-text-3xl)}
+  .lp-stat-icon{width:46px;height:46px;font-size:1.05rem}
+  .lp-step{padding:var(--ds-space-4)}
+  .lp-step-number{width:54px;height:54px;font-size:var(--ds-text-xl)}
+  .lp-cta-card{padding:var(--ds-space-8) var(--ds-space-5)}
+  .lp-cta-content p{font-size:var(--ds-text-sm)}
+  .lp-cta-actions .ds-btn{width:100%}
+}
+
+/* Small phones: single-column feature cards + stack the stats cleanly. */
+@media(max-width:480px){
+  .lp-hero-title{font-size:clamp(1.75rem,8vw,2.25rem)}
+  .lp-features-grid{gap:var(--ds-space-4)}
+  .lp-stats-grid{grid-template-columns:1fr;gap:var(--ds-space-3)}
+  .lp-stat-card{padding:var(--ds-space-4);display:flex;align-items:center;text-align:left;gap:var(--ds-space-4)}
+  .lp-stat-icon{margin:0;width:44px;height:44px}
+  .lp-stat-body{min-width:0}
+  .lp-stat-value{font-size:var(--ds-text-2xl);margin-bottom:2px}
+  .lp-stat-label{font-size:var(--ds-text-xs)}
+  .lp-footer-bottom p{font-size:var(--ds-text-xs)}
+}
+
+/* Respect users who prefer less motion. */
+@media(prefers-reduced-motion:reduce){
+  .lp-hero-shape,.lp-hero-content{animation:none}
+  .lp-feature-card,.lp-feature-card::before{transition:none}
+  .lp-btn-primary:hover,.lp-btn-ghost:hover{transform:none}
+}
