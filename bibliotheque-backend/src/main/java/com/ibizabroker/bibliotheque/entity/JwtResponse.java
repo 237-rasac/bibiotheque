@@ -1,7 +1,5 @@
 package com.ibizabroker.bibliotheque.entity;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-
 import java.util.List;
 
 public class JwtResponse {
@@ -12,7 +10,6 @@ public class JwtResponse {
     // qui les utilise pour l'affichage et la redirection post-login.
     private List<String> roles;
 
-    @JsonIgnore
     private String jwtToken;
 
     public JwtResponse(Users user, String jwtToken) {

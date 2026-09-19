@@ -106,8 +106,9 @@ public class ReservationService {
     /**
      * POST /api/reservations - Create a new reservation
      * Security rules enforced:
-     * - RS-04 (critical): the reserved identity comes from the JWT token
-     *   (SecurityContextHolder), NEVER from request.getAdherentId().
+     * - RS-04: for ADHERENT, the reserved identity comes from the JWT token.
+     * - BIBLIOTHECAIRE: can create a reservation on behalf of any ADHERENT
+     *   (uses adherentId from the request body).
      * Business rules enforced:
      * - RG-01: Book must be currently unavailable (noOfCopies < 1)
      * - RG-02: Member cannot have more than one active reservation for the same book
@@ -116,7 +117,6 @@ public class ReservationService {
      */
     @Transactional
     public ReservationResponse createReservation(ReservationRequest request) {
-        // Identity from the security context, not from the request body (RS-04)
         Integer currentUserId = getCurrentUserId();
 
         // Validate required fields (400)
@@ -124,15 +124,26 @@ public class ReservationService {
             throw new IllegalArgumentException("livreId is required");
         }
 
+        // Determine the target adherent:
+        // - BIBLIOTHECAIRE: can create a reservation on behalf of any ADHERENT
+        //   (uses adherentId from the request body)
+        // - ADHERENT: always uses the JWT identity (RS-04, cannot impersonate)
+        Integer targetAdherentId;
+        if (isBibliothecaire() && request.getAdherentId() != null) {
+            targetAdherentId = request.getAdherentId();
+        } else {
+            targetAdherentId = currentUserId;
+        }
+
         // Find book (404 if not found)
         Books book = booksRepository.findById(request.getLivreId())
                 .orElseThrow(() -> new NotFoundException(
                         "Livre with id " + request.getLivreId() + " does not exist."));
 
-        // The reservation is always created for the authenticated user (RS-04)
-        Users adherent = usersRepository.findById(currentUserId)
-                .orElseThrow(() -> new UnauthorizedException(
-                        "Utilisateur with id " + currentUserId + " does not exist."));
+        // Find the target adherent (404 if not found)
+        Users adherent = usersRepository.findById(targetAdherentId)
+                .orElseThrow(() -> new NotFoundException(
+                        "Utilisateur with id " + targetAdherentId + " does not exist."));
 
         // RG-01: Book must be currently unavailable (noOfCopies < 1)
         // Copies null traitées comme "donnée invalide" plutôt que NPE (500).
@@ -150,19 +161,19 @@ public class ReservationService {
         // RG-02: Member cannot have more than one active reservation for the same book
         List<Reservation> existingForBook = reservationRepository
                 .findByAdherentUserIdAndLivreBookIdAndStatutIn(
-                        currentUserId, request.getLivreId(), ACTIVE_STATUTS);
+                        targetAdherentId, request.getLivreId(), ACTIVE_STATUTS);
         if (!existingForBook.isEmpty()) {
             throw new ConflictException(
-                    "Vous avez déjà une réservation active pour le livre \"" + book.getBookName() + "\".",
+                    "Le membre \"" + adherent.getName() + "\" a déjà une réservation active pour le livre \"" + book.getBookName() + "\".",
                     "RG-02");
         }
 
         // RG-03: Member cannot have more than 3 active reservations simultaneously
         long activeCount = reservationRepository.countByAdherentUserIdAndStatutIn(
-                currentUserId, ACTIVE_STATUTS);
+                targetAdherentId, ACTIVE_STATUTS);
         if (activeCount >= 3) {
             throw new ConflictException(
-                    "Vous avez déjà 3 réservations actives. La limite maximale est atteinte.",
+                    "Le membre \"" + adherent.getName() + "\" a déjà 3 réservations actives. La limite maximale est atteinte.",
                     "RG-03");
         }
 
