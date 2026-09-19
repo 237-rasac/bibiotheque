@@ -25,23 +25,38 @@ public class BooksController {
         return booksRepository.findAll();
     }
 
-    @PreAuthorize("hasRole('Admin')")
+    @PreAuthorize("hasRole('BIBLIOTHECAIRE')")
     @GetMapping("/books/{id}")
     public ResponseEntity<Books> getBookById(@PathVariable Integer id) {
         Books book = booksRepository.findById(id).orElseThrow(() -> new NotFoundException("Book with id "+ id +" does not exist."));
         return ResponseEntity.ok(book);
     }
 
-    @PreAuthorize("hasRole('Admin')")
+    @PreAuthorize("hasRole('BIBLIOTHECAIRE')")
     @PostMapping("/books")
     public Books createBook(@RequestBody Books book) {
+        validateBook(book);
         return booksRepository.save(book);
     }
 
-    @PreAuthorize("hasRole('Admin')")
+    /**
+     * Validation défensive : un livre sans nom ou avec un nombre de copies null
+     * cassait la logique de réservation (NPE sur getNoOfCopies()) et d'emprunt.
+     */
+    private void validateBook(Books book) {
+        if (book.getBookName() == null || book.getBookName().isBlank()) {
+            throw new IllegalArgumentException("Book name is required.");
+        }
+        if (book.getNoOfCopies() == null || book.getNoOfCopies() < 0) {
+            throw new IllegalArgumentException("Number of copies is required and must be >= 0.");
+        }
+    }
+
+    @PreAuthorize("hasRole('BIBLIOTHECAIRE')")
     @PutMapping("/books/{id}")
     public ResponseEntity<Books> updateBook(@PathVariable Integer id, @RequestBody Books bookDetails) {
         Books book = booksRepository.findById(id).orElseThrow(() -> new NotFoundException("Book with id "+ id +" does not exist."));
+        validateBook(bookDetails);
 
         book.setBookName(bookDetails.getBookName());
         book.setBookAuthor(bookDetails.getBookAuthor());
@@ -52,7 +67,7 @@ public class BooksController {
         return ResponseEntity.ok(updatedBook);
     }
 
-    @PreAuthorize("hasRole('Admin')")
+    @PreAuthorize("hasRole('BIBLIOTHECAIRE')")
     @DeleteMapping("/books/{id}")
     public ResponseEntity<Map<String, Boolean>> deleteBook(@PathVariable Integer id) {
         Books book = booksRepository.findById(id).orElseThrow(() -> new NotFoundException("Book with id "+ id +" does not exist."));

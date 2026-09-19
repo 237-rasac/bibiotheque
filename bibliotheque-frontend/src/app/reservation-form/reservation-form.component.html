@@ -1,0 +1,89 @@
+<!-- Standalone card mode -->
+<div *ngIf="!embedded" class="ds-card ds-mt-6 ds-animate-slideUp reservation-form-card">
+  <div class="ds-card-header">
+    <h5 class="ds-h5" style="margin: 0;"><i class="fa-solid fa-plus-circle" style="margin-right: 0.5rem; color: var(--ds-success);"></i> Create Reservation</h5>
+  </div>
+  <div class="ds-card-body">
+    <form (ngSubmit)="onSubmit()">
+      <div class="ds-form-group">
+        <label class="ds-label" for="livreSelect">
+          <i class="fa-solid fa-book" style="margin-right: 0.3rem;"></i> Book
+        </label>
+        <select
+          id="livreSelect"
+          class="ds-select"
+          [(ngModel)]="livreId"
+          name="livreId"
+          required>
+          <option [ngValue]="null" disabled>-- Select a book --</option>
+          <option *ngFor="let book of books" [ngValue]="book.bookId">
+            {{ book.bookName }} — {{ book.bookAuthor }}
+          </option>
+        </select>
+      </div>
+
+      <div class="ds-form-group">
+        <label class="ds-label" for="adherentSelect">
+          <i class="fa-solid fa-user" style="margin-right: 0.3rem;"></i> Member
+        </label>
+        <select
+          id="adherentSelect"
+          class="ds-select"
+          [(ngModel)]="adherentId"
+          name="adherentId"
+          required>
+          <option [ngValue]="null" disabled>-- Select a member --</option>
+          <option *ngFor="let user of users" [ngValue]="user.userId">
+            {{ user.name }} ({{ user.username }})
+          </option>
+        </select>
+      </div>
+
+      <button
+        type="submit"
+        class="ds-btn ds-btn-primary"
+        [disabled]="!isFormValid || submitting">
+        <span *ngIf="submitting" class="ds-spinner ds-spinner-sm"></span>
+        <i *ngIf="!submitting" class="fa-solid fa-plus"></i>
+        {{ submitting ? 'Creating...' : 'Create Reservation' }}
+      </button>
+    </form>
+  </div>
+</div>
+
+<!-- Embedded form-only mode (for modal) -->
+<form *ngIf="embedded" (ngSubmit)="onSubmit()">
+  <div class="ds-form-group">
+    <label class="ds-label" for="livreSelectModal">
+      <i class="fa-solid fa-book" style="margin-right: 0.3rem;"></i> Book
+    </label>
+    <select
+      id="livreSelectModal"
+      class="ds-select"
+      [(ngModel)]="livreId"
+      name="livreId"
+      required>
+      <option [ngValue]="null" disabled>-- Select a book --</option>
+      <option *ngFor="let book of books" [ngValue]="book.bookId">
+        {{ book.bookName }} — {{ book.bookAuthor }}
+      </option>
+    </select>
+  </div>
+
+  <div class="ds-form-group">
+    <label class="ds-label" for="adherentSelectModal">
+      <i class="fa-solid fa-user" style="margin-right: 0.3rem;"></i> Member
+    </label>
+    <select
+      id="adherentSelectModal"
+      class="ds-select"
+      [(ngModel)]="adherentId"
+      name="adherentId"
+      required>
+      <option [ngValue]="null" disabled>-- Select a member --</option>
+      <option *ngFor="let user of users" [ngValue]="user.userId">
+        {{ user.name }} ({{ user.username }})
+      </option>
+    </select>
+  </div>
+</form>

@@ -8,6 +8,7 @@ import { BorrowService } from '../_service/borrow.service';
 import { UsersService } from '../_service/users.service';
 
 @Component({
+  standalone: false,
   selector: 'app-user-details',
   templateUrl: './user-details.component.html',
   styleUrls: ['./user-details.component.css']
@@ -29,9 +30,9 @@ export class UserDetailsComponent implements OnInit {
     this.id = this.route.snapshot.params['userId'];
     // console.log(this.id);
     this.user = new Users();
-    this.userService.getUserById(this.id).subscribe( data => {
-      this.user = data;
-      console.log(data);
+    this.userService.getUserById(this.id).subscribe({
+      next: (data) => { this.user = data; },
+      error: () => { /* toast handled by interceptor */ }
     })
 
     this.getBorrowedByUser(this.id);
@@ -39,9 +40,9 @@ export class UserDetailsComponent implements OnInit {
   }
 
   private getBorrowedByUser(userId: number) {
-    this.borrowService.getBooksBorrowedByUser(userId).subscribe(data => {
-      this.borrow = data;
-      console.log(data);
+    this.borrowService.getBooksBorrowedByUser(userId).subscribe({
+      next: (data) => { this.borrow = data; },
+      error: () => { /* toast handled by interceptor */ }
     });
   }
 

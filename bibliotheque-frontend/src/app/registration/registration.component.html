@@ -1,27 +1,53 @@
-<div class="container col-md-6 offset-mid-3">
-    <h3 class="text-center"> Add User </h3>
-    <form (ngSubmit) = "onSubmit()" autocomplete="off">
-
-        <div class="form-group">
-            <label style="margin-bottom: 10px"> Name </label>
-            <input type="text" class="form-control" style="margin-bottom: 10px" id="name" [(ngModel)] = "user.name" name="name">
+<div class="form-wrapper">
+  <div class="ds-card ds-animate-scaleIn">
+    <div class="ds-card-header">
+      <h4 style="margin: 0;"><i class="fa-solid fa-user-plus" style="margin-right: 0.5rem; color: var(--ds-primary);"></i> Add User</h4>
+    </div>
+    <div class="ds-card-body">
+      <!-- Le rôle est attribué par le backend (ADHERENT) : aucun champ rôle ici. -->
+      <form #createForm="ngForm" (ngSubmit)="onSubmit(createForm)" autocomplete="off">
+        <div class="ds-form-group">
+          <label class="ds-label">Name</label>
+          <input type="text" class="ds-input" [class.ds-input-invalid]="name.invalid && (name.touched || createForm.submitted)"
+                 [(ngModel)]="user.name" name="name" #name="ngModel"
+                 required minlength="2" maxlength="50" placeholder="Enter full name">
+          <small class="ds-field-error" *ngIf="name.invalid && (name.touched || createForm.submitted)">
+            <span *ngIf="name.errors?.['required']">Name is required.</span>
+            <span *ngIf="name.errors?.['minlength']">Name must be at least 2 characters.</span>
+          </small>
         </div>
-
-        <div class="form-group">
-            <label style="margin-bottom: 10px"> Username </label>
-            <input type="text" class="form-control" style="margin-bottom: 10px" id="username" [(ngModel)] = "user.username" name="username">
+        <div class="ds-form-group">
+          <label class="ds-label">Username</label>
+          <input type="text" class="ds-input" [class.ds-input-invalid]="username.invalid && (username.touched || createForm.submitted)"
+                 [(ngModel)]="user.username" name="username" #username="ngModel"
+                 required minlength="3" maxlength="30" pattern="[a-zA-Z0-9._-]+" placeholder="Enter username">
+          <small class="ds-field-error" *ngIf="username.invalid && (username.touched || createForm.submitted)">
+            <span *ngIf="username.errors?.['required']">Username is required.</span>
+            <span *ngIf="username.errors?.['minlength']">Username must be at least 3 characters.</span>
+            <span *ngIf="username.errors?.['pattern']">Only letters, digits, dots, dashes and underscores.</span>
+          </small>
         </div>
-
-        <div class="form-group">
-            <label style="margin-bottom: 10px"> Password </label>
-            <input type="password" class="form-control" style="margin-bottom: 10px" id="password" [(ngModel)] = "user.password" name="password">
+        <div class="ds-form-group">
+          <label class="ds-label">Password</label>
+          <div class="password-field">
+            <input [type]="showPassword ? 'text' : 'password'" class="ds-input" [class.ds-input-invalid]="password.invalid && (password.touched || createForm.submitted)"
+                   [(ngModel)]="user.password" name="password" #password="ngModel"
+                   required minlength="6" placeholder="Enter password" autocomplete="new-password">
+            <button type="button" class="password-toggle" (click)="showPassword = !showPassword"
+                    [attr.aria-label]="showPassword ? 'Masquer le mot de passe' : 'Afficher le mot de passe'"
+                    [attr.aria-pressed]="showPassword">
+              <i class="fa-solid" [class.fa-eye]="!showPassword" [class.fa-eye-slash]="showPassword"></i>
+            </button>
+          </div>
+          <small class="ds-field-error" *ngIf="password.invalid && (password.touched || createForm.submitted)">
+            <span *ngIf="password.errors?.['required']">Password is required.</span>
+            <span *ngIf="password.errors?.['minlength']">Password must be at least 6 characters.</span>
+          </small>
         </div>
-
-        <div class="form-group">
-            <label style="margin-bottom: 10px"> Role (Admin, User) </label>
-            <input type="text" class="form-control" style="margin-bottom: 10px" id="role" [(ngModel)] = "user.role[0].roleName" name="role">
-        </div>
-
-        <button class="btn btn-success" type="submit"> Submit </button>
-    </form>
+        <button class="ds-btn ds-btn-success" type="submit" [disabled]="formSubmitting">
+          <i class="fa-solid fa-check"></i> Create User
+        </button>
+      </form>
+    </div>
+  </div>
 </div>

@@ -6,10 +6,15 @@ import io.jsonwebtoken.SignatureAlgorithm;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 
+import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.function.Function;
+import java.util.stream.Collectors;
+import org.springframework.security.core.GrantedAuthority;
 
 @Component
 public class JwtUtil {
@@ -47,7 +52,14 @@ public class JwtUtil {
 
     public String generateToken(UserDetails userDetails) {
 
+        // Le(s) rôle(s) de l'utilisateur sont embarqués dans le JWT (claim "roles"),
+        // préfixés ROLE_ comme les authorities de Spring Security.
+        List<String> roles = userDetails.getAuthorities().stream()
+                .map(GrantedAuthority::getAuthority)
+                .collect(Collectors.toList());
+
         Map<String, Object> claims = new HashMap<>();
+        claims.put("roles", roles);
 
         return Jwts.builder()
                 .setClaims(claims)
@@ -56,5 +68,21 @@ public class JwtUtil {
                 .setExpiration(new Date(System.currentTimeMillis() + TOKEN_VALIDITY * 1000))
                 .signWith(SignatureAlgorithm.HS512, SECRET_KEY)
                 .compact();
+    }
+
+    /**
+     * Extrait la liste des rôles du claim "roles" du token (vide si absent).
+     */
+    @SuppressWarnings("unchecked")
+    public List<String> getRolesFromToken(String token) {
+        final Claims claims = getAllClaimsFromToken(token);
+        Object rolesClaim = claims.get("roles");
+        if (rolesClaim instanceof List) {
+            return ((List<Object>) rolesClaim).stream()
+                    .filter(Objects::nonNull)
+                    .map(String::valueOf)
+                    .collect(Collectors.toList());
+        }
+        return Collections.emptyList();
     }
 }

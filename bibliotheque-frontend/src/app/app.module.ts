@@ -14,7 +14,9 @@ import { UserDetailsComponent } from './user-details/user-details.component';
 import { UpdateUserComponent } from './update-user/update-user.component';
 import { LoginComponent } from './login/login.component';
 import { LogoutComponent } from './logout/logout.component';
+import { MyReservationsComponent } from './my-reservations/my-reservations.component';
 import { HeaderComponent } from './header/header.component';
+import { LandingHeaderComponent } from './landing-header/landing-header.component';
 import { HomeComponent } from './home/home.component';
 import { BooksService } from './_service/books.service';
 import { UsersService } from './_service/users.service';
@@ -24,6 +26,14 @@ import { AuthInterceptor } from './_auth/auth.interceptor';
 import { ForbiddenComponent } from './forbidden/forbidden.component';
 import { BorrowBookComponent } from './borrow-book/borrow-book.component';
 import { ReturnBookComponent } from './return-book/return-book.component';
+import { ReservationComponent } from './reservation/reservation.component';
+import { ReservationListComponent } from './reservation-list/reservation-list.component';
+import { ReservationFormComponent } from './reservation-form/reservation-form.component';
+import { ReservationDetailsComponent } from './reservation-details/reservation-details.component';
+import { SidebarComponent } from './sidebar/sidebar.component';
+import { ConfirmModalComponent } from './confirm-modal/confirm-modal.component';
+import { DashboardComponent } from './dashboard/dashboard.component';
+import { NotificationComponent } from './notification/notification.component';
 
 @NgModule({
   declarations: [
@@ -39,10 +49,20 @@ import { ReturnBookComponent } from './return-book/return-book.component';
     LoginComponent,
     LogoutComponent,
     HeaderComponent,
+    LandingHeaderComponent,
     HomeComponent,
     ForbiddenComponent,
     BorrowBookComponent,
     ReturnBookComponent,
+    ReservationComponent,
+    MyReservationsComponent,
+    ReservationListComponent,
+    ReservationFormComponent,
+    ReservationDetailsComponent,
+    DashboardComponent,
+    SidebarComponent,
+    NotificationComponent,
+    ConfirmModalComponent,
   ],
   imports: [
     BrowserModule,

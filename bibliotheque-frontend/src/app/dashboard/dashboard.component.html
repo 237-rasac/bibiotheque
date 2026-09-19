@@ -1,0 +1,217 @@
+<!-- ============================================================ -->
+<!-- ADMIN DASHBOARD — first screen after librarian login          -->
+<!-- ============================================================ -->
+<div class="dash">
+
+  <!-- Page header -->
+  <div class="dash-header ds-animate-fadeIn">
+    <div>
+      <h2 class="dash-title"><i class="fa-solid fa-chart-pie"></i> Dashboard</h2>
+      <p class="dash-subtitle">Overview of your library at a glance</p>
+    </div>
+    <div class="dash-header-actions">
+      <button class="ds-btn ds-btn-ghost ds-btn-sm" (click)="onRetry()" [disabled]="loading">
+        <i class="fa-solid fa-rotate" [class.fa-spin]="loading"></i> Refresh
+      </button>
+      <a class="ds-btn ds-btn-primary ds-btn-sm" routerLink="/reservations">
+        <i class="fa-solid fa-calendar-check"></i> Reservations
+      </a>
+    </div>
+  </div>
+
+  <!-- Loading skeleton -->
+  <div *ngIf="loading" class="dash-skeleton">
+    <div class="dash-kpi-grid">
+      <div class="dash-kpi dash-skel" *ngFor="let i of [1,2,3,4]"></div>
+    </div>
+    <div class="dash-charts">
+      <div class="dash-card dash-skel dash-skel--tall"></div>
+      <div class="dash-card dash-skel dash-skel--tall"></div>
+    </div>
+  </div>
+
+  <!-- Error -->
+  <div *ngIf="hasError && !loading" class="ds-alert ds-alert-danger ds-animate-scaleIn">
+    <i class="fa-solid fa-circle-exclamation"></i>
+    <div class="ds-alert-content">
+      <div class="ds-alert-title">Error</div>
+      <div>{{ error }}</div>
+    </div>
+    <button class="ds-btn ds-btn-outline-danger ds-btn-sm" (click)="onRetry()">
+      <i class="fa-solid fa-rotate"></i> Retry
+    </button>
+  </div>
+
+  <ng-container *ngIf="!loading && !hasError">
+
+    <!-- KPI CARDS -->
+    <div class="dash-kpi-grid">
+      <div class="dash-kpi ds-animate-fadeIn">
+        <div class="dash-kpi-icon dash-kpi-icon--primary"><i class="fa-solid fa-book"></i></div>
+        <div class="dash-kpi-meta">
+          <span class="dash-kpi-value" #kpiValue [attr.data-value]="totalBooks">0</span>
+          <span class="dash-kpi-label">Total books</span>
+        </div>
+        <span class="dash-kpi-extra">{{ totalCopies }} copies</span>
+      </div>
+
+      <div class="dash-kpi ds-animate-fadeIn">
+        <div class="dash-kpi-icon dash-kpi-icon--success"><i class="fa-solid fa-users"></i></div>
+        <div class="dash-kpi-meta">
+          <span class="dash-kpi-value" #kpiValue [attr.data-value]="totalUsers">0</span>
+          <span class="dash-kpi-label">Users</span>
+        </div>
+        <span class="dash-kpi-extra">{{ activeMembers }} active members</span>
+      </div>
+
+      <div class="dash-kpi ds-animate-fadeIn">
+        <div class="dash-kpi-icon dash-kpi-icon--accent"><i class="fa-solid fa-calendar-check"></i></div>
+        <div class="dash-kpi-meta">
+          <span class="dash-kpi-value" #kpiValue [attr.data-value]="activeReservations">0</span>
+          <span class="dash-kpi-label">Active reservations</span>
+        </div>
+        <span class="dash-kpi-extra">{{ pendingReservations }} awaiting</span>
+      </div>
+
+      <div class="dash-kpi ds-animate-fadeIn">
+        <div class="dash-kpi-icon dash-kpi-icon--warning"><i class="fa-solid fa-hourglass-half"></i></div>
+        <div class="dash-kpi-meta">
+          <span class="dash-kpi-value" #kpiValue [attr.data-value]="expiredReservations">0</span>
+          <span class="dash-kpi-label">Expired</span>
+        </div>
+        <span class="dash-kpi-extra">{{ honoredRate }}% honored</span>
+      </div>
+    </div>
+
+    <!-- QUICK ACTIONS -->
+    <div class="dash-actions">
+      <a class="dash-action ds-animate-fadeIn" routerLink="/create-book">
+        <span class="dash-action-icon dash-action-icon--primary"><i class="fa-solid fa-book-section"></i></span>
+        <span class="dash-action-text">
+          <span class="dash-action-title">Add book</span>
+          <span class="dash-action-sub">Catalog a new title</span>
+        </span>
+        <i class="fa-solid fa-arrow-right dash-action-arrow"></i>
+      </a>
+
+      <a class="dash-action ds-animate-fadeIn" routerLink="/register-user">
+        <span class="dash-action-icon dash-action-icon--success"><i class="fa-solid fa-user-plus"></i></span>
+        <span class="dash-action-text">
+          <span class="dash-action-title">Register user</span>
+          <span class="dash-action-sub">Create a member account</span>
+        </span>
+        <i class="fa-solid fa-arrow-right dash-action-arrow"></i>
+      </a>
+
+      <a class="dash-action ds-animate-fadeIn" routerLink="/reservations">
+        <span class="dash-action-icon dash-action-icon--accent"><i class="fa-solid fa-calendar-plus"></i></span>
+        <span class="dash-action-text">
+          <span class="dash-action-title">New reservation</span>
+          <span class="dash-action-sub">Book a title for a member</span>
+        </span>
+        <i class="fa-solid fa-arrow-right dash-action-arrow"></i>
+      </a>
+
+      <a class="dash-action ds-animate-fadeIn" routerLink="/return-book">
+        <span class="dash-action-icon dash-action-icon--secondary"><i class="fa-solid fa-rotate-left"></i></span>
+        <span class="dash-action-text">
+          <span class="dash-action-title">Return</span>
+          <span class="dash-action-sub">Process a book return</span>
+        </span>
+        <i class="fa-solid fa-arrow-right dash-action-arrow"></i>
+      </a>
+    </div>
+
+    <!-- CHARTS ROW -->
+    <div class="dash-charts">
+
+      <!-- Weekly activity chart -->
+      <div class="dash-card dash-card--chart ds-animate-slideUp">
+        <div class="dash-card-header">
+          <h3><i class="fa-solid fa-chart-column"></i> Reservations this week</h3>
+        </div>
+        <div class="dash-card-body">
+          <div class="dash-chart">
+            <div class="dash-chart-bars">
+              <div class="dash-chart-col" *ngFor="let bar of weekBars">
+                <span class="dash-chart-value">{{ bar.value }}</span>
+                <div class="dash-chart-track">
+                  <div class="dash-chart-bar"
+                       [class.dash-chart-bar--today]="bar.isToday"
+                       [style.--bar-h]="(maxWeekValue > 0 ? (bar.value / maxWeekValue) * 100 : 0) + '%'"></div>
+                </div>
+                <span class="dash-chart-label">{{ bar.label }}</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Status donut -->
+      <div class="dash-card ds-animate-slideUp">
+        <div class="dash-card-header">
+          <h3><i class="fa-solid fa-circle-nodes"></i> Reservation status</h3>
+        </div>
+        <div class="dash-card-body dash-donut-body">
+          <div class="dash-donut" role="img" aria-label="Reservations by status">
+            <svg viewBox="0 0 42 42" class="dash-donut-svg">
+              <circle class="dash-donut-ring" cx="21" cy="21" r="15.9"></circle>
+              <circle
+                *ngFor="let seg of donutSegments; let i = index"
+                class="dash-donut-seg"
+                cx="21" cy="21" r="15.9"
+                [attr.stroke]="seg.color"
+                [style.stroke-dasharray]="seg.pct + ' ' + (100 - seg.pct)"
+                [style.stroke-dashoffset]="segmentOffset(i)"></circle>
+            </svg>
+            <div class="dash-donut-center">
+              <span class="dash-donut-total">{{ reservations.length }}</span>
+              <span class="dash-donut-caption">total</span>
+            </div>
+          </div>
+          <ul class="dash-donut-legend">
+            <li *ngFor="let item of donutLegend">
+              <span class="dash-dot" [style.background]="item.color"></span>
+              {{ item.label }}
+              <strong>{{ item.value }}</strong>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <!-- TOP LISTS ROW -->
+    <div class="dash-lists">
+      <div class="dash-card ds-animate-slideUp">
+        <div class="dash-card-header">
+          <h3><i class="fa-solid fa-fire"></i> Most reserved books</h3>
+          <a class="dash-card-link" routerLink="/books">View all <i class="fa-solid fa-arrow-right"></i></a>
+        </div>
+        <ul class="dash-top-list">
+          <li *ngFor="let book of topBooks; let i = index">
+            <span class="dash-rank" [class.dash-rank--top]="i === 0">{{ i + 1 }}</span>
+            <span class="dash-top-name">{{ book.name }}</span>
+            <span class="dash-top-count">{{ book.count }} res.</span>
+          </li>
+          <li *ngIf="topBooks.length === 0" class="dash-top-empty">No reservation data yet.</li>
+        </ul>
+      </div>
+
+      <div class="dash-card ds-animate-slideUp">
+        <div class="dash-card-header">
+          <h3><i class="fa-solid fa-users-viewfinder"></i> Most active members</h3>
+          <a class="dash-card-link" routerLink="/users">View all <i class="fa-solid fa-arrow-right"></i></a>
+        </div>
+        <ul class="dash-top-list">
+          <li *ngFor="let member of topMembers; let i = index">
+            <span class="dash-rank" [class.dash-rank--top]="i === 0">{{ i + 1 }}</span>
+            <span class="dash-top-name">{{ member.name }}</span>
+            <span class="dash-top-count">{{ member.count }} res.</span>
+          </li>
+          <li *ngIf="topMembers.length === 0" class="dash-top-empty">No reservation data yet.</li>
+        </ul>
+      </div>
+    </div>
+
+  </ng-container>
+</div>

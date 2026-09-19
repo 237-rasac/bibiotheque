@@ -1,27 +1,30 @@
-<div class="container col-md-6 offset-mid-3">
-    <h3> Edit Book </h3>
-    <form (ngSubmit) = "onSubmit()">
-
-        <div class="form-group">
-            <label style="margin-bottom: 10px"> Book Name </label>
-            <input type="text" class="form-control" style="margin-bottom: 10px" id="bookName" [(ngModel)] = "book.bookName" name="bookName">
+<div class="form-wrapper">
+  <div class="ds-card ds-animate-scaleIn">
+    <div class="ds-card-header">
+      <h4 style="margin: 0;"><i class="fa-solid fa-pen-to-square" style="margin-right: 0.5rem; color: var(--ds-secondary);"></i> Edit Book</h4>
+    </div>
+    <div class="ds-card-body">
+      <form (ngSubmit)="onSubmit()">
+        <div class="ds-form-group">
+          <label class="ds-label">Book Name</label>
+          <input type="text" class="ds-input" id="bookName" [(ngModel)]="book.bookName" name="bookName">
         </div>
-
-        <div class="form-group">
-            <label style="margin-bottom: 10px"> Author </label>
-            <input type="text" class="form-control" style="margin-bottom: 10px" id="bookAuthor" [(ngModel)] = "book.bookAuthor" name="bookAuthor">
+        <div class="ds-form-group">
+          <label class="ds-label">Author</label>
+          <input type="text" class="ds-input" id="bookAuthor" [(ngModel)]="book.bookAuthor" name="bookAuthor">
         </div>
-
-        <div class="form-group">
-            <label style="margin-bottom: 10px"> Genre </label>
-            <input type="text" class="form-control" style="margin-bottom: 10px" id="bookGenre" [(ngModel)] = "book.bookGenre" name="bookGenre">
+        <div class="ds-form-group">
+          <label class="ds-label">Genre</label>
+          <input type="text" class="ds-input" id="bookGenre" [(ngModel)]="book.bookGenre" name="bookGenre">
         </div>
-
-        <div class="form-group">
-            <label style="margin-bottom: 10px"> Number of Copies </label>
-            <input type="text" class="form-control" style="margin-bottom: 10px" id="noOfCopies" [(ngModel)] = "book.noOfCopies" name="noOfCopies">
+        <div class="ds-form-group">
+          <label class="ds-label">Number of Copies</label>
+          <input type="number" class="ds-input" id="noOfCopies" [(ngModel)]="book.noOfCopies" name="noOfCopies">
         </div>
-
-        <button class="btn btn-success" type="submit"> Submit </button>
-    </form>
+        <button class="ds-btn ds-btn-primary" type="submit">
+          <i class="fa-solid fa-save"></i> Save Changes
+        </button>
+      </form>
+    </div>
+  </div>
 </div>

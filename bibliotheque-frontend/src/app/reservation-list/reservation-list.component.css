@@ -1,0 +1,23 @@
+.reservation-filter {
+  max-width: 300px;
+}
+
+.reservation-filter .ds-select {
+  min-width: 0;
+  box-sizing: border-box;
+}
+
+.reservation-row {
+  cursor: pointer;
+  transition: background-color 0.15s ease;
+}
+
+.reservation-row:hover {
+  background-color: var(--ds-hover-bg, #f3f4f6);
+}
+
+@media (max-width: 576px) {
+  .reservation-filter {
+    max-width: 100%;
+  }
+}

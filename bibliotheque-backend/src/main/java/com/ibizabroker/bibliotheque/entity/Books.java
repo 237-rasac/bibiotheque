@@ -18,11 +18,12 @@ public class Books {
     Integer noOfCopies;
 
     public void borrowBook() {
-        this.noOfCopies--;
+        // Défensif : un livre importé/créé avec copies null ne doit pas lever de NPE
+        this.noOfCopies = (this.noOfCopies == null) ? -1 : this.noOfCopies - 1;
     }
 
     public void returnBook() {
-        this.noOfCopies++;
+        this.noOfCopies = (this.noOfCopies == null) ? 1 : this.noOfCopies + 1;
     }
 
 }

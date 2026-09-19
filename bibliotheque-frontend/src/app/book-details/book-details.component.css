@@ -1,0 +1,10 @@
+.page-header h2 {
+  font-size: var(--ds-text-3xl);
+}
+
+@media (max-width: 576px) {
+  .page-header h2 {
+    font-size: var(--ds-text-2xl);
+    word-break: break-word;
+  }
+}

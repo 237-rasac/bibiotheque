@@ -1,22 +1,29 @@
-<div class="container col-md-6 offset-mid-3">
-    <h3 class="text-center"> Edit User </h3>
-    <form (ngSubmit) = "onSubmit()" autocomplete="off">
-
-        <div class="form-group">
-            <label style="margin-bottom: 10px"> Name </label>
-            <input type="text" class="form-control" style="margin-bottom: 10px" id="name" [(ngModel)] = "user.name" name="name">
+<div class="form-wrapper">
+  <div class="ds-card ds-animate-scaleIn">
+    <div class="ds-card-header">
+      <h4 style="margin: 0;"><i class="fa-solid fa-user-pen" style="margin-right: 0.5rem; color: var(--ds-secondary);"></i> Edit User</h4>
+    </div>
+    <div class="ds-card-body">
+      <form (ngSubmit)="onSubmit()" autocomplete="off">
+        <div class="ds-form-group">
+          <label class="ds-label">Name</label>
+          <input type="text" class="ds-input" id="name" [(ngModel)]="user.name" name="name">
         </div>
-
-        <div class="form-group">
-            <label style="margin-bottom: 10px"> Username </label>
-            <input type="text" class="form-control" style="margin-bottom: 10px" id="username" [(ngModel)] = "user.username" name="username">
+        <div class="ds-form-group">
+          <label class="ds-label">Username</label>
+          <input type="text" class="ds-input" id="username" [(ngModel)]="user.username" name="username">
         </div>
-
-        <div class="form-group">
-            <label style="margin-bottom: 10px"> Role (Admin, User) </label>
-            <input type="text" class="form-control" style="margin-bottom: 10px" id="role" [(ngModel)] = "user.role[0].roleName" name="role">
+        <div class="ds-form-group">
+          <label class="ds-label">Role</label>
+          <select class="ds-select" id="role" [(ngModel)]="user.role[0].roleName" name="role">
+          <option value="ADHERENT">Adhérent</option>
+          <option value="BIBLIOTHECAIRE">Bibliothécaire</option>
+          </select>
         </div>
-
-        <button class="btn btn-success" type="submit"> Submit </button>
-    </form>
+        <button class="ds-btn ds-btn-primary" type="submit">
+          <i class="fa-solid fa-save"></i> Save Changes
+        </button>
+      </form>
+    </div>
+  </div>
 </div>

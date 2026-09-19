@@ -1,25 +1,75 @@
-<h2>List of books to be returned</h2>
-<table class="table table-success table-striped">
+<div class="ds-mb-6 ds-animate-slideDown page-header">
+  <h2><i class="fa-solid fa-rotate-left" style="color: var(--ds-warning); margin-right: 0.5rem;"></i> Books to Return</h2>
+  <p>Return your borrowed books before the due date.</p>
+</div>
+
+<!-- Skeleton loading -->
+<div *ngIf="loading" class="ds-table-wrapper ds-skeleton-fadeIn">
+  <table class="ds-skeleton-table">
     <thead>
-        <tr>
-            <th> Book ID </th>
-            <th> Issue Date </th>
-            <th> Return Date </th>
-            <th> Overdue Date </th>
-            <th> Action </th>
-        </tr>
+      <tr>
+        <th style="width: 80px;"></th>
+        <th style="width: 20%;"></th>
+        <th style="width: 20%;"></th>
+        <th style="width: 20%;"></th>
+        <th style="width: 120px;"></th>
+      </tr>
     </thead>
     <tbody>
-        <tr *ngFor="let b of borrow">
-            <td> {{ b.bookId }} </td>
-            <td> {{ b.issueDate }} </td>
-            <td> {{ b.returnDate }} </td>
-            <td> {{ b.dueDate }} </td>
-            <td>
-                <div *ngIf="b.returnDate === null">
-                    <button (click) = "returnBook(b.borrowId)" class="btn btn-success"> Return </button>
-                </div>
-            </td>
-        </tr>
+      <tr *ngFor="let i of [1,2,3,4,5]" class="ds-skeleton-row">
+        <td><div class="ds-skeleton-bar w-30"></div></td>
+        <td><div class="ds-skeleton-bar w-50"></div></td>
+        <td><div class="ds-skeleton-bar w-50"></div></td>
+        <td><div class="ds-skeleton-bar w-50"></div></td>
+        <td><div class="ds-skeleton-btn" style="width: 80px;"></div></td>
+      </tr>
     </tbody>
-</table>
+  </table>
+</div>
+
+<!-- Empty state -->
+<div *ngIf="!loading && borrow.length === 0" class="ds-empty-state ds-animate-fadeIn">
+  <div class="ds-empty-state-icon"><i class="fa-solid fa-rotate-left"></i></div>
+  <div class="ds-empty-state-title">No books to return</div>
+  <div class="ds-empty-state-text">You have no borrowed books that need to be returned.</div>
+</div>
+
+<!-- Actual table -->
+<div *ngIf="!loading" class="ds-table-wrapper ds-animate-slideUp">
+  <table class="ds-table">
+    <thead>
+      <tr>
+        <th>Book ID</th>
+        <th>Issue Date</th>
+        <th>Return Date</th>
+        <th>Due Date</th>
+        <th>Action</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let b of borrow">
+        <td data-label="Book ID">{{ b.bookId }}</td>
+        <td data-label="Issue Date">{{ b.issueDate }}</td>
+        <td data-label="Return Date">{{ b.returnDate }}</td>
+        <td data-label="Due Date">{{ b.dueDate }}</td>
+        <td data-label="Action">
+          <div *ngIf="b.returnDate === null">
+            <button (click)="returnBook(b.borrowId)" class="ds-btn ds-btn-warning ds-btn-sm">
+              <i class="fa-solid fa-rotate-left"></i> Return
+            </button>
+          </div>
+          <span *ngIf="b.returnDate !== null" class="ds-badge ds-badge-success">
+            <i class="fa-solid fa-check"></i> Returned
+          </span>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+
+<!-- Empty state -->
+<div *ngIf="!loading && borrow.length === 0" class="ds-empty-state ds-animate-fadeIn">
+  <div class="ds-empty-state-icon"><i class="fa-solid fa-rotate-left"></i></div>
+  <div class="ds-empty-state-title">No books to return</div>
+  <div class="ds-empty-state-text">You have no borrowed books that need to be returned.</div>
+</div>

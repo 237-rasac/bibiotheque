@@ -18,7 +18,9 @@ export class AuthGuard implements CanActivate {
     route: ActivatedRouteSnapshot,
     state: RouterStateSnapshot): Observable<boolean | UrlTree> | Promise<boolean | UrlTree> | boolean | UrlTree {
 
-    if(this.userAuthService.getToken() !== null) {
+    // Plus de token lisible côté JS (cookie httpOnly) : la présence de rôles
+    // enregistrés au login sert d'indicateur de session côté client.
+    if(this.userAuthService.isLoggedIn()) {
       const role = route.data["roles"] as Array<string>;
 
       if(role) {

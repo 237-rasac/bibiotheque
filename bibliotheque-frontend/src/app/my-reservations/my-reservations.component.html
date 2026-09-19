@@ -1,0 +1,16 @@
+<div class="ds-mb-4 ds-animate-fadeIn" style="display: flex; justify-content: flex-end; align-items: center;">
+  <button class="ds-btn ds-btn-ghost ds-btn-sm" (click)="onRetry()" [disabled]="loading">
+    <i class="fa-solid fa-rotate" [class.fa-spin]="loading"></i> Refresh
+  </button>
+</div>
+
+<app-reservation-list
+  [reservations]="reservations"
+  [loading]="loading"
+  [error]="error"
+  [selectedStatut]="selectedStatut"
+  [cancelling]="cancelling"
+  (statutChange)="onStatutChange($event)"
+  (cancel)="onAnnuler($event)"
+  (retry)="onRetry()">
+</app-reservation-list>

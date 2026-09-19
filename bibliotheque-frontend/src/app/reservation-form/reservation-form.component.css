@@ -1,0 +1,35 @@
+.reservation-form-card .ds-form-group {
+  overflow: hidden;
+}
+
+.reservation-form-card .ds-select {
+  min-width: 0;
+  max-width: 100%;
+  box-sizing: border-box;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.reservation-form-card form {
+  width: 100%;
+  max-width: 100%;
+  overflow: hidden;
+}
+
+@media (max-width: 576px) {
+  .reservation-form-card .ds-card-header {
+    padding: var(--ds-space-3) var(--ds-space-4);
+  }
+
+  .reservation-form-card .ds-card-body {
+    padding: var(--ds-space-4);
+  }
+
+  .reservation-form-card .ds-select {
+    font-size: var(--ds-text-xs);
+  }
+
+  .reservation-form-card .ds-btn {
+    width: 100%;
+  }
+}

@@ -6,6 +6,7 @@ import com.ibizabroker.bibliotheque.entity.JwtResponse;
 import com.ibizabroker.bibliotheque.entity.Users;
 import com.ibizabroker.bibliotheque.util.JwtUtil;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.DisabledException;
@@ -29,6 +30,7 @@ public class JwtService implements UserDetailsService {
     private UsersRepository userDao;
 
     @Autowired
+    @Lazy
     private AuthenticationManager authenticationManager;
 
     public JwtResponse createJwtToken(JwtRequest jwtRequest) throws Exception {
@@ -40,22 +42,24 @@ public class JwtService implements UserDetailsService {
         String newGeneratedToken = jwtUtil.generateToken(userDetails);
 
         Users user = userDao.findByUsername(username).get();
-        return new JwtResponse(user, newGeneratedToken);
+        JwtResponse jwtResponse = new JwtResponse(user, newGeneratedToken);
+        // Rôles exposés au frontend en clair (le token lui-même reste dans le cookie httpOnly)
+        jwtResponse.setRoles(jwtUtil.getRolesFromToken(newGeneratedToken));
+        return jwtResponse;
     }
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        Users user = userDao.findByUsername(username).get();
+        // orElseThrow explicite : un Optional nue plantait en NoSuchElementException
+        // au lieu d'un 401 propre si le compte n'existe pas.
+        Users user = userDao.findByUsername(username)
+                .orElseThrow(() -> new UsernameNotFoundException("User not found with username: " + username));
 
-        if (user != null) {
-            return new org.springframework.security.core.userdetails.User(
-                    user.getUsername(),
-                    user.getPassword(),
-                    getAuthority(user)
-            );
-        } else {
-            throw new UsernameNotFoundException("User not found with username: " + username);
-        }
+        return new org.springframework.security.core.userdetails.User(
+                user.getUsername(),
+                user.getPassword(),
+                getAuthority(user)
+        );
     }
 
     private Set getAuthority(Users user) {

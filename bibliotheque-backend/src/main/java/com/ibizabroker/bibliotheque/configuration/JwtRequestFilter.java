@@ -1,9 +1,11 @@
 package com.ibizabroker.bibliotheque.configuration;
 
 import com.ibizabroker.bibliotheque.service.JwtService;
+import com.ibizabroker.bibliotheque.util.JwtCookieUtil;
 import com.ibizabroker.bibliotheque.util.JwtUtil;
-import io.jsonwebtoken.ExpiredJwtException;
+import io.jsonwebtoken.JwtException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -24,6 +26,7 @@ public class JwtRequestFilter extends OncePerRequestFilter {
     private JwtUtil jwtUtil;
 
     @Autowired
+    @Lazy
     private JwtService jwtService;
 
     @Override
@@ -36,26 +39,36 @@ public class JwtRequestFilter extends OncePerRequestFilter {
 
         if (requestTokenHeader != null && requestTokenHeader.startsWith("Bearer ")) {
             jwtToken = requestTokenHeader.substring(7);
+        } else {
+            // Pas de header Authorization : repli sur le cookie httpOnly (stockage XSS-safe)
+            jwtToken = JwtCookieUtil.extractJwtFromCookie(request);
+        }
+
+        if (jwtToken != null) {
             try {
                 username = jwtUtil.getUsernameFromToken(jwtToken);
             } catch (IllegalArgumentException e) {
+                // Token mal forme : aucun utilisateur ne sera authentifie -> 401
                 System.out.println("Unable to get JWT Token");
-            } catch (ExpiredJwtException e) {
-                System.out.println("JWT Token has expired");
+            } catch (JwtException e) {
+                // ExpiredJwtException, MalformedJwtException, SignatureException...
+                System.out.println("JWT Token invalid or expired");
             }
-        } else {
-            System.out.println("JWT token does not start with Bearer");
         }
 
         if (username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
+            try {
+                UserDetails userDetails = jwtService.loadUserByUsername(username);
 
-            UserDetails userDetails = jwtService.loadUserByUsername(username);
+                if (jwtUtil.validateToken(jwtToken, userDetails)) {
 
-            if (jwtUtil.validateToken(jwtToken, userDetails)) {
-
-                UsernamePasswordAuthenticationToken usernamePasswordAuthenticationToken = new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
-                usernamePasswordAuthenticationToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
-                SecurityContextHolder.getContext().setAuthentication(usernamePasswordAuthenticationToken);
+                    UsernamePasswordAuthenticationToken usernamePasswordAuthenticationToken = new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
+                    usernamePasswordAuthenticationToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
+                    SecurityContextHolder.getContext().setAuthentication(usernamePasswordAuthenticationToken);
+                }
+            } catch (Exception e) {
+                // User no longer exists or account disabled : ignore, treat as unauthenticated
+                System.out.println("JWT user not found or disabled: " + username);
             }
         }
         filterChain.doFilter(request, response);

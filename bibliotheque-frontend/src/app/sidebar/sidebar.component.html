@@ -1,0 +1,94 @@
+<!-- Mobile toggle button (floating) -->
+<button
+  *ngIf="isLoggedIn()"
+  class="ds-sidebar-mobile-toggle"
+  (click)="toggleMobile()"
+  [attr.aria-label]="mobileOpen ? 'Close menu' : 'Open menu'"
+  [attr.aria-expanded]="mobileOpen">
+  <i class="fa-solid" [class.fa-bars]="!mobileOpen" [class.fa-xmark]="mobileOpen"></i>
+</button>
+
+<!-- Backdrop overlay -->
+<div
+  *ngIf="isLoggedIn() && mobileOpen"
+  class="ds-sidebar-backdrop"
+  (click)="closeMobile()">
+</div>
+
+<!-- Sidebar -->
+<aside
+  class="ds-sidebar"
+  [class.ds-sidebar-collapsed]="collapsed"
+  [class.ds-sidebar-mobile-open]="mobileOpen"
+  *ngIf="isLoggedIn()">
+
+  <!-- Desktop collapse toggle -->
+  <button class="ds-sidebar-toggle ds-sidebar-toggle-desktop" (click)="toggleCollapse()" [title]="collapsed ? 'Expand sidebar' : 'Collapse sidebar'">
+    <i class="fa-solid" [class.fa-angles-left]="!collapsed" [class.fa-angles-right]="collapsed"></i>
+  </button>
+
+  <!-- Navigation links -->
+  <nav class="ds-sidebar-nav">
+    <ul class="ds-sidebar-links">
+      <li *ngIf="userService.roleMatch(['BIBLIOTHECAIRE'])">
+        <a routerLink="/dashboard" routerLinkActive="active" class="ds-sidebar-link" [title]="collapsed ? 'Dashboard' : ''"
+           [class.ds-sidebar-link--pulse]="isNavPulsing()">
+          <i class="fa-solid fa-chart-pie"></i>
+          <span class="ds-sidebar-label">Dashboard</span>
+        </a>
+      </li>
+
+      <li *ngIf="userService.roleMatch(['BIBLIOTHECAIRE'])">
+        <a routerLink="/books" routerLinkActive="active" class="ds-sidebar-link" [title]="collapsed ? 'Books' : ''"
+           [class.ds-sidebar-link--pulse]="isNavPulsing()">
+          <i class="fa-solid fa-book"></i>
+          <span class="ds-sidebar-label">Books</span>
+        </a>
+      </li>
+
+      <li *ngIf="userService.roleMatch(['BIBLIOTHECAIRE'])">
+        <a routerLink="/users" routerLinkActive="active" class="ds-sidebar-link" [title]="collapsed ? 'Users' : ''"
+           [class.ds-sidebar-link--pulse]="isNavPulsing()">
+          <i class="fa-solid fa-users"></i>
+          <span class="ds-sidebar-label">Users</span>
+        </a>
+      </li>
+
+      <li *ngIf="userService.roleMatch(['BIBLIOTHECAIRE'])">
+        <a routerLink="/reservations" routerLinkActive="active" class="ds-sidebar-link" [title]="collapsed ? 'Reservations' : ''"
+           [class.ds-sidebar-link--pulse]="isNavPulsing()">
+          <i class="fa-solid fa-calendar-check"></i>
+          <span class="ds-sidebar-label">Reservations</span>
+        </a>
+      </li>
+
+      <!-- User links -->
+      <li *ngIf="userService.roleMatch(['ADHERENT'])">
+        <a routerLink="/borrow-book" routerLinkActive="active" class="ds-sidebar-link" [title]="collapsed ? 'Borrow' : ''">
+          <i class="fa-solid fa-book-reader"></i>
+          <span class="ds-sidebar-label">Borrow</span>
+        </a>
+      </li>
+      <li *ngIf="userService.roleMatch(['ADHERENT'])">
+        <a routerLink="/my-reservations" routerLinkActive="active" class="ds-sidebar-link" [title]="collapsed ? 'Mes réservations' : ''">
+          <i class="fa-solid fa-calendar-check"></i>
+          <span class="ds-sidebar-label">Mes réservations</span>
+        </a>
+      </li>
+      <li *ngIf="userService.roleMatch(['ADHERENT'])">
+        <a routerLink="/return-book" routerLinkActive="active" class="ds-sidebar-link" [title]="collapsed ? 'Return' : ''">
+          <i class="fa-solid fa-rotate-left"></i>
+          <span class="ds-sidebar-label">Return</span>
+        </a>
+      </li>
+    </ul>
+  </nav>
+
+  <!-- Sidebar footer -->
+  <div class="ds-sidebar-footer">
+    <button class="ds-sidebar-link ds-sidebar-link-logout" (click)="logout()" [title]="collapsed ? 'Logout' : ''">
+      <i class="fa-solid fa-right-from-bracket"></i>
+      <span class="ds-sidebar-label">Logout</span>
+    </button>
+  </div>
+</aside>

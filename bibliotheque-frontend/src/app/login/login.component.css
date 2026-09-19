@@ -1,0 +1,49 @@
+/* Center the page vertically in the viewport.
+   4.5rem compensates the .ds-main-content vertical padding (1.5rem top + 3rem bottom). */
+:host {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  min-height: calc(100vh - 4.5rem);
+}
+
+.login-back {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin: 0 0 1.5rem;
+  padding: 0.5rem 1rem;
+  font-size: var(--ds-text-sm);
+  font-weight: 500;
+  color: var(--ds-text-secondary);
+  text-decoration: none;
+  border-radius: var(--ds-radius-full);
+  transition: color var(--ds-transition), background-color var(--ds-transition);
+}
+
+.login-back:hover {
+  color: var(--ds-primary);
+  background: var(--ds-primary-light);
+}
+
+.login-back i {
+  transition: transform var(--ds-transition);
+}
+
+.login-back:hover i {
+  transform: translateX(-3px);
+}
+
+.login-wrapper {
+  max-width: 420px;
+  width: 100%;
+  margin: 0;
+}
+
+@media (max-width: 576px) {
+  .login-wrapper {
+    max-width: 100%;
+  }
+}
